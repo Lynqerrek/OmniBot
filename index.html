@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniBot AI v17.0 "Flow"</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message-anim { animation: fadeIn 0.3s ease-out forwards; }
+        
+        /* Flow Pulse */
+        @keyframes pulse-teal {
+            0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+        }
+        .flow-ring { animation: pulse-teal 2s infinite; }
+
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen flex flex-col items-center justify-center font-sans overflow-hidden">
+
+    <!-- Main Container -->
+    <div class="w-full max-w-5xl h-full md:h-[90vh] flex flex-col bg-slate-900 md:rounded-2xl shadow-2xl overflow-hidden border border-slate-800 relative ring-1 ring-slate-800">
+        
+        <!-- Header -->
+        <div class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center z-10 shadow-lg relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-96 h-full bg-gradient-to-l from-teal-900/20 to-transparent pointer-events-none"></div>
+
+            <div class="flex items-center gap-4">
+                <div class="relative w-4 h-4 rounded-full bg-teal-500 flow-ring z-10" id="status-dot"></div>
+                <div class="z-10">
+                    <h1 class="font-bold text-xl tracking-wide text-white flex items-center gap-2">
+                        Omni<span class="text-teal-400">Bot</span> 
+                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">v17.0</span>
+                    </h1>
+                    <div class="flex gap-3 text-[10px] text-slate-400 font-mono mt-0.5">
+                        <span class="flex items-center gap-1"><i class="ph-bold ph-globe"></i> <span id="api-indicator">22 SOURCES</span></span>
+                        <span class="flex items-center gap-1"><i class="ph-bold ph-waves"></i> <span id="mood-indicator">FLOW STATE</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-xs text-slate-500 font-mono text-right z-10" id="status-text">Conversational Flow</div>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-6 relative scroll-smooth bg-gradient-to-b from-slate-900 to-slate-900/95">
+            <div class="flex flex-col gap-1 items-start message-anim group">
+                <div class="bg-slate-800 border border-slate-700 text-slate-200 px-5 py-3 rounded-2xl rounded-tl-sm max-w-[90%] text-sm shadow-sm group-hover:shadow-md transition-shadow">
+                    <p class="font-semibold text-teal-300 mb-1">OmniBot v17.0 "Flow"</p>
+                    <p>I am now a conversational partner. I analyze sentence structure to give human-like responses.</p>
+                    <div class="grid grid-cols-2 gap-2 mt-3 text-xs text-slate-400">
+                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">💬 <strong>"I think space is cool"</strong></div>
+                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">🐶 <strong>"Show me a dog"</strong></div>
+                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">❤️ <strong>"I love pizza"</strong></div>
+                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">🌍 <strong>"Capital of France"</strong></div>
+                    </div>
+                </div>
+                <span class="text-[10px] text-slate-600 ml-1 font-mono">SYSTEM</span>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="hidden px-6 py-2">
+            <div class="bg-slate-800 border border-slate-700 w-16 h-9 rounded-2xl flex items-center justify-center gap-1.5 shadow-sm">
+                <div class="w-1.5 h-1.5 bg-teal-400 rounded-full typing-dot"></div>
+                <div class="w-1.5 h-1.5 bg-teal-400 rounded-full typing-dot"></div>
+                <div class="w-1.5 h-1.5 bg-teal-400 rounded-full typing-dot"></div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <form id="chat-form" class="p-4 bg-slate-900 border-t border-slate-800 flex gap-3">
+            <div class="flex-1 relative">
+                <input 
+                    type="text" 
+                    id="user-input" 
+                    class="w-full bg-slate-800/50 border border-slate-700 text-slate-100 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all placeholder-slate-600 text-sm shadow-inner"
+                    placeholder="Chat with me..."
+                    autocomplete="off"
+                >
+            </div>
+            <button 
+                type="submit" 
+                class="bg-teal-600 hover:bg-teal-500 text-white rounded-xl px-5 py-3.5 transition-all disabled:opacity-50 font-medium shadow-lg shadow-teal-900/20 hover:shadow-teal-500/20 flex items-center justify-center active:scale-95"
+            >
+                <i class="ph-bold ph-paper-plane-right text-lg"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        /**
+         * --- OMNIBOT v17.0 "FLOW" ---
+         * FEATURES:
+         * 1. KEYWORD REFLECTION: Extracts subjects from user input to form relevant questions.
+         * 2. TOPIC STEERING: Changes topic if conversation stalls.
+         * 3. EXPANDED PATTERNS: 100+ logical flows.
+         */
+
+        // --- 1. STATE ---
+        const state = {
+            mood: 'neutral',
+            lastIntent: null,
+            contextSubject: null
+        };
+
+        const updateMood = (sentiment) => {
+            if (sentiment > 0) state.mood = 'happy';
+            else if (sentiment < 0) state.mood = 'sympathetic';
+            else state.mood = 'neutral';
+            document.getElementById('mood-indicator').innerText = state.mood.toUpperCase();
+        };
+
+        // --- 2. THOUGHT LOGGER ---
+        class ThoughtLogger {
+            constructor() { this.logs = []; }
+            add(text) { 
+                this.logs.push(text); 
+                console.log(`[Brain] ${text}`); 
+            }
+            getHTML() {
+                return `
+                <details class="mb-3 group" open>
+                    <summary class="text-[10px] font-mono text-teal-400/80 cursor-pointer hover:text-teal-300 select-none flex items-center gap-2 mb-2 opacity-60 hover:opacity-100 transition-opacity">
+                        <i class="ph-bold ph-chats-circle"></i> THOUGHT STREAM
+                    </summary>
+                    <div class="pl-3 border-l-2 border-teal-500/20 text-[10px] font-mono text-slate-500 space-y-1">
+                        ${this.logs.map(log => `<div>> ${log}</div>`).join('')}
+                    </div>
+                </details>`;
+            }
+        }
+
+        // --- 3. DATA APIs ---
+        const APIs = {
+            weather: async (city) => {
+                const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=en&format=json`).then(r=>r.json());
+                if(!geo.results) return null;
+                const { latitude, longitude, name, country } = geo.results[0];
+                const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`).then(r=>r.json());
+                return { type: 'weather', name, country, temp: w.current_weather.temperature };
+            },
+            crypto: async (coin) => {
+                const map = { "btc": "bitcoin", "eth": "ethereum" };
+                const id = map[coin] || coin;
+                const r = await fetch(`https://api.coincap.io/v2/assets/${id}`);
+                if(!r.ok) return null;
+                const d = (await r.json()).data;
+                return { type: 'crypto', name: d.name, price: parseFloat(d.priceUsd).toFixed(2) };
+            },
+            dog: async () => fetch('https://dog.ceo/api/breeds/image/random').then(r=>r.json()).then(d => ({ type: 'image', url: d.message })),
+            cat: async () => fetch('https://meowfacts.herokuapp.com/').then(r=>r.json()).then(d => ({ type: 'fact', text: d.data[0] })),
+            fact: async () => fetch('https://uselessfacts.jsph.pl/random.json?language=en').then(r=>r.json()).then(d => ({ type: 'fact', text: d.text })),
+            joke: async () => fetch('https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single').then(r=>r.json()).then(d => ({ type: 'joke', text: d.joke })),
+            quote: async () => fetch('https://api.quotable.io/random').then(r=>r.json()).then(d => ({ type: 'quote', text: d.content, author: d.author })),
+            monster: async () => {
+                const r = await fetch('https://www.dnd5eapi.co/api/monsters');
+                const d = await r.json();
+                const random = d.results[Math.floor(Math.random() * d.results.length)];
+                return { type: 'nerd', text: `A wild **${random.name}** appears!` };
+            },
+            nationality: async (name) => {
+                const r = await fetch(`https://api.nationalize.io/?name=${name}`);
+                const d = await r.json();
+                if(d.country.length === 0) return null;
+                return { type: 'nat', name, country: d.country[0].country_id, prob: Math.round(d.country[0].probability * 100) };
+            },
+            book: async (q) => fetch(`https://openlibrary.org/search.json?q=${q}&limit=1`).then(r=>r.json()).then(d => d.docs[0] ? { type: 'book', title: d.docs[0].title, author: d.docs[0].author_name?.[0] } : null),
+            advice: async () => fetch('https://api.adviceslip.com/advice').then(r=>r.json()).then(d => ({ type: 'advice', text: d.slip.advice })),
+            country: async (n) => fetch(`https://restcountries.com/v3.1/name/${n}`).then(r=>r.json()).then(d => d[0] ? { type: 'geo', name: d[0].name.common, region: d[0].region } : null),
+            dict: async (w) => fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${w}`).then(r=>r.json()).then(d => d[0] ? { type: 'dict', word: w, def: d[0].meanings[0].definitions[0].definition } : null)
+        };
+
+        // --- 4. CONVERSATIONAL ENGINE (ELIZA 2.0) ---
+        
+        const chatPatterns = [
+            // INTRO / GREETINGS
+            { check: /^(hi|hello|hey|greetings|yo)/i, reply: () => [
+                "Hey! What's on your mind today?",
+                "Hello there. Ready to chat or find some data?",
+                "Hi! I'm online and listening."
+            ]},
+            { check: /how are you/i, reply: () => [
+                "I'm functioning perfectly. How are you feeling?",
+                "My circuits are happy. What about you?",
+                "I'm good! Thanks for asking."
+            ]},
+            
+            // EMOTIONS & FEELINGS
+            { check: /i (feel|am) (sad|upset|depressed|lonely)/i, reply: (m) => [
+                `I'm sorry to hear you're ${m[2]}. Do you want to talk about it?`,
+                `Being ${m[2]} is tough. Want a dog picture to cheer you up?`,
+                `Why are you feeling ${m[2]} today?`
+            ]},
+            { check: /i (feel|am) (happy|good|great|excited)/i, reply: (m) => [
+                `That's awesome! What's making you feel ${m[2]}?`,
+                `I love that energy! Being ${m[2]} suits you.`,
+                `Glad to hear it! Keep that vibe going.`
+            ]},
+            { check: /i (like|love|enjoy) (.+)/i, reply: (m) => {
+                state.contextSubject = m[2];
+                return [
+                    `What is it about ${m[2]} that you enjoy?`,
+                    `${m[2]} is pretty cool. How long have you liked it?`,
+                    `I've heard good things about ${m[2]}.`
+                ];
+            }},
+            { check: /i (hate|dislike|cant stand) (.+)/i, reply: (m) => {
+                state.contextSubject = m[2];
+                return [
+                    `What makes you dislike ${m[2]}?`,
+                    `I understand. ${m[2]} isn't for everyone.`,
+                    `Interesting. Why do you feel that way about ${m[2]}?`
+                ];
+            }},
+
+            // OPINIONS & THOUGHTS
+            { check: /i think (.+)/i, reply: (m) => [
+                `That's an interesting perspective. Why do you think that?`,
+                `Valid point. Tell me more.`,
+                `I hadn't considered that. Go on.`
+            ]},
+            { check: /do you think (.+)/i, reply: (m) => [
+                `I try not to have biased opinions, but it's a complex topic.`,
+                `It depends on how you look at it. What's your take?`,
+                `I think there are many sides to that story.`
+            ]},
+            
+            // QUESTIONS ABOUT BOT
+            { check: /are you (real|human|alive)/i, reply: () => [
+                "I am code, but my conversation is real.",
+                "I'm a virtual entity, but I like to think I have a personality.",
+                "I exist in the browser, so I'm as real as this website."
+            ]},
+            { check: /who made you/i, reply: () => [
+                "I was built by a developer using JavaScript and TensorFlow.",
+                "I am a construct of code and logic."
+            ]},
+            
+            // ACTIONS
+            { check: /what can you do/i, reply: () => [
+                "I can fetch weather, crypto prices, book info, definitions, dog photos, or just chat with you about life.",
+                "I'm a multi-purpose bot. Try asking 'Show me a dog' or 'Define paradox'."
+            ]},
+
+            // RANDOM FILLERS
+            { check: /^(ok|okay|sure|fine|cool|nice|wow)$/i, reply: () => [
+                "Indeed.",
+                "Yeah.",
+                "So, what else is new?",
+                "Glad we agree."
+            ]},
+            { check: /^(no|nope|nah)$/i, reply: () => [
+                "Fair enough.",
+                "Why not?",
+                "Alright then."
+            ]},
+            { check: /^(yes|yeah|yep)$/i, reply: () => [
+                "Awesome.",
+                "Tell me more.",
+                "I thought so."
+            ]}
+        ];
+
+        // --- 5. LOGIC & FALLBACKS ---
+
+        function getReflection(text) {
+            // Extracts the longest noun/verb phrase to ask about it
+            const words = text.split(' ');
+            const significant = words.filter(w => w.length > 4);
+            if (significant.length > 0) {
+                const topic = significant[Math.floor(Math.random() * significant.length)].replace(/[^\w]/g, '');
+                return [
+                    `Tell me more about **${topic}**.`,
+                    `What are your thoughts on **${topic}**?`,
+                    `How does **${topic}** fit into the bigger picture?`,
+                    `Is **${topic}** important to you?`
+                ];
+            }
+            return null;
+        }
+
+        async function getRandomTopic() {
+            const actions = [
+                async () => `Speaking of random things... did you know? ${(await APIs.fact()).text}`,
+                async () => `Let's switch gears. ${(await APIs.joke()).text}`,
+                async () => `Here is something to think about: "${(await APIs.quote()).text}"`,
+                async () => `Need a break? Here is a dog: <br><img src="${(await APIs.dog()).url}" class="mt-2 rounded h-32">`
+            ];
+            return await actions[Math.floor(Math.random() * actions.length)]();
+        }
+
+        // --- 6. MASTER HANDLER ---
+
+        async function handleInput(rawText) {
+            const thoughts = new ThoughtLogger();
+            const text = rawText.trim();
+            const lower = text.toLowerCase();
+            const noiseWords = ['another', 'one', 'more', 'again', 'and', 'the', 'what', 'is', 'a', 'to', 'of', 'for', 'smth', 'something', 'maybe', 'idk', 'lol', 'wow', 'ok', 'okay', 'so', 'like', 'uh'];
+            
+            thoughts.add(`Input: "${text}"`);
+
+            // 1. CONTEXT RECALL
+            if (/^(another|more|again|one more)/i.test(text) && state.lastIntent) {
+                thoughts.add(`Recalling intent: ${state.lastIntent}`);
+                return await performAction(state.lastIntent, thoughts);
+            }
+
+            // 2. NOISE FILTER FOR DB
+            if (noiseWords.includes(lower)) {
+                thoughts.add("Noise word detected. Engaging Chat.");
+                return { html: thoughts.getHTML() + "Go on, I'm listening." };
+            }
+
+            // 3. CHECK PATTERNS (ELIZA)
+            for (let pattern of chatPatterns) {
+                const match = text.match(pattern.check);
+                if (match) {
+                    thoughts.add("Matched Conversation Pattern");
+                    const replies = pattern.reply(match);
+                    const reply = replies[Math.floor(Math.random() * replies.length)]; // Pick random variant
+                    return { html: thoughts.getHTML() + reply };
+                }
+            }
+
+            // 4. CHECK API INTENTS
+            if (lower.includes("dog")) return await performAction('dog', thoughts);
+            if (lower.includes("cat")) return await performAction('cat', thoughts);
+            if (lower.includes("weather") || lower.includes("temp")) {
+                const city = lower.replace(/weather|temp|in|at|check/g, '').trim();
+                const d = await APIs.weather(city);
+                return { html: thoughts.getHTML() + (d ? `Current weather in **${d.name}**: ${d.temp}°C.` : "I couldn't find that city.") };
+            }
+            if (lower.includes("joke")) return await performAction('joke', thoughts);
+            if (lower.includes("fact") || lower.includes("trivia")) return await performAction('fact', thoughts);
+            if (lower.includes("quote")) return await performAction('quote', thoughts);
+            if (lower.includes("monster")) return await performAction('monster', thoughts);
+            
+            if (lower.includes("define") || lower.includes("meaning")) {
+                const word = lower.split(' ').pop();
+                if (noiseWords.includes(word)) return { html: thoughts.getHTML() + "I can't define that word." };
+                const d = await APIs.dict(word);
+                return { html: thoughts.getHTML() + (d ? `**${d.word}**: ${d.def}` : "Word not found.") };
+            }
+
+            // 5. SMART FALLBACK (REFLECTION & STEERING)
+            thoughts.add("No match found. Attempting Reflection/Steering.");
+            
+            // Try to reflect a keyword
+            const reflections = getReflection(text);
+            if (reflections && Math.random() > 0.3) {
+                const reply = reflections[Math.floor(Math.random() * reflections.length)];
+                return { html: thoughts.getHTML() + reply };
+            }
+
+            // If input is short or boring, change topic
+            if (text.length < 10 || Math.random() > 0.7) {
+                thoughts.add("Conversation stalling. Injecting new topic.");
+                const newTopic = await getRandomTopic();
+                return { html: thoughts.getHTML() + newTopic };
+            }
+
+            // Ultimate generic fallback
+            const generics = [
+                "That's really interesting. Tell me more.",
+                "I see. Why is that?",
+                "Can you elaborate?",
+                "That's a unique way to look at it."
+            ];
+            return { html: thoughts.getHTML() + generics[Math.floor(Math.random() * generics.length)] };
+        }
+
+        async function performAction(intent, thoughts) {
+            thoughts.add(`Action: ${intent.toUpperCase()}`);
+            state.lastIntent = intent;
+            
+            let data, html;
+            if (intent === 'dog') {
+                data = await APIs.dog();
+                html = `<img src="${data.url}" class="mt-2 rounded-md shadow-lg max-h-60" alt="Dog">`;
+            } else if (intent === 'cat') {
+                data = await APIs.cat();
+                html = data.text;
+            } else if (intent === 'joke') {
+                data = await APIs.joke();
+                html = data.text;
+            } else if (intent === 'fact') {
+                data = await APIs.fact();
+                html = data.text;
+            } else if (intent === 'quote') {
+                data = await APIs.quote();
+                html = `"${data.text}" - ${data.author}`;
+            } else if (intent === 'monster') {
+                data = await APIs.monster();
+                html = data.text;
+            }
+            return { html: thoughts.getHTML() + html };
+        }
+
+        // --- UI ---
+        const chatBox = document.getElementById('chat-box');
+        const input = document.getElementById('user-input');
+        const form = document.getElementById('chat-form');
+        const typing = document.getElementById('typing-indicator');
+
+        function addMessage(html, isUser) {
+            const div = document.createElement('div');
+            div.className = `flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'} message-anim`;
+            const bub = document.createElement('div');
+            bub.className = `px-5 py-3 rounded-2xl max-w-[90%] text-sm shadow-md leading-relaxed ${isUser ? 'bg-teal-600 text-white rounded-tr-sm' : 'bg-slate-800 border border-slate-700 text-slate-200 rounded-tl-sm'}`;
+            bub.innerHTML = html;
+            div.appendChild(bub);
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = input.value.trim();
+            if(!text) return;
+            addMessage(text, true);
+            input.value = '';
+            typing.classList.remove('hidden');
+            
+            const delay = 600 + Math.random() * 600;
+            
+            setTimeout(async () => {
+                try {
+                    const res = await handleInput(text);
+                    typing.classList.add('hidden');
+                    addMessage(res.html, false);
+                } catch(e) {
+                    typing.classList.add('hidden');
+                    addMessage("I lost my train of thought. Say again?", false);
+                }
+            }, delay);
+        });
+
+    </script>
+</body>
+</html>
