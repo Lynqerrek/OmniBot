@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v11.5 (Robust Chat)</title>
+    <title>OmniBot v11.5 (Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -479,6 +479,24 @@
             return await res.text();
         }
 
+        // --- MISSING FUNCTION: queryCortex (Fix for "Network Error") ---
+        async function queryCortex(text, thinkingEl, signal, log, thoughts) {
+            log("Consulting Neural Cloud...");
+            try {
+                // Using Pollinations as the default chat engine
+                const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai`;
+                const res = await fetchWithRetry(url, { signal });
+                if (!res.ok) throw new Error("Network response was not ok");
+                const answer = await res.text();
+                
+                removeThinkingMessage(thinkingEl);
+                addMessage(answer, 'ai', 'text', thoughts);
+            } catch (error) {
+                // Let the main error handler deal with it
+                throw error; 
+            }
+        }
+
         async function processInput(text) {
             if (abortController) { abortController.abort(); removeThinkingMessage(); }
             abortController = new AbortController();
@@ -742,11 +760,14 @@
         }
 
         async function executeCanvas(text, thinkingEl, signal, log, thoughts) {
-            log("Analyzing system architecture...");
-            // ... (Canvas logic same as previous) ...
+            log("Analyzing requirements...");
+            const prompt = `Generate code for: ${text}. output only the code.`;
+            const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+            const res = await fetchWithRetry(url, { signal });
+            const code = await res.text();
             removeThinkingMessage(thinkingEl);
-            editorInput.value = "// Code generated";
-            addMessage("Script generated in Canvas.", 'ai', 'text', thoughts);
+            editorInput.value = code;
+            addMessage("I have drafted the code in the Architect IDE.", 'ai', 'text', thoughts);
         }
 
         function openFullscreen(src) { document.getElementById('fullscreen-modal').classList.remove('hidden'); document.getElementById('fullscreen-img').src = src; }
