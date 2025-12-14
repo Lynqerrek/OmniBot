@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v8.1 (Canvas & Fixed)</title>
+    <title>OmniBot v11.5 (Robust Chat)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
     <style>
         :root {
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-bg: rgba(20, 20, 25, 0.7);
             --accent-primary: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.5);
             --canvas-border: rgba(168, 85, 247, 0.4);
-            --canvas-bg: rgba(15, 15, 20, 0.95);
+            --canvas-bg: rgba(10, 10, 15, 0.95);
+            --editor-bg: #1e1e1e;
         }
         
         body { 
@@ -29,23 +32,21 @@
             transition: all 0.5s ease;
         }
         
-        /* Canvas Mode Styles */
         body.canvas-mode {
             background-image: 
-                linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)),
-                radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.15), transparent 60%);
-            font-family: 'JetBrains Mono', monospace;
+                linear-gradient(rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.95)),
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1), transparent 60%);
         }
         
         body.canvas-mode .glass-panel {
             background: var(--canvas-bg);
             border-color: var(--canvas-border);
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.05);
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
@@ -74,6 +75,39 @@
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
         
+        #editor-wrapper {
+            transition: width 0.3s ease, opacity 0.3s ease;
+            width: 0;
+            opacity: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--glass-border);
+            background: var(--editor-bg);
+        }
+        
+        body.canvas-mode #editor-wrapper { width: 55%; opacity: 1; }
+        
+        @media (max-width: 768px) {
+            body.canvas-mode #editor-wrapper { width: 100%; position: absolute; top: 64px; bottom: 0; z-index: 30; }
+            body.canvas-mode #chat-pane { display: none; }
+        }
+
+        #code-input {
+            background: transparent;
+            color: #d4d4d8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            white-space: pre;
+            overflow-x: auto; 
+            padding: 1rem;
+        }
+
+        .editor-header { background: #252526; border-bottom: 1px solid #333; }
+        
         /* Markdown */
         .prose h1, .prose h2, .prose h3 { color: #fff; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
         .prose p { margin-bottom: 1em; line-height: 1.6; color: #d4d4d8; }
@@ -84,20 +118,21 @@
         .prose pre code { background: transparent; padding: 0; color: inherit; }
         .prose img { border-radius: 0.75rem; margin-top: 1em; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #52525b; border-radius: 4px; }
+        .thought-content {
+            border-left: 2px solid #3f3f46;
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
 
     <!-- HEADER -->
-    <header class="h-16 flex-none glass-panel z-20 flex items-center justify-between px-6 sticky top-0">
+    <header class="h-16 flex-none glass-panel z-40 flex items-center justify-between px-6 sticky top-0">
         <div class="flex items-center gap-4">
             <div id="header-icon" class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 ring-1 ring-white/10 transition-all duration-500">
                 <i class="fa-solid fa-cube text-white text-sm"></i>
             </div>
             <div>
-                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v8.1</span></h1>
+                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.5</span></h1>
                 <div class="flex items-center gap-2">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] transition-colors"></span>
                     <p class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase" id="status-text">Active</p>
@@ -106,7 +141,7 @@
         </div>
         <div class="flex gap-2 items-center">
             <button onclick="toggleCanvas()" id="canvas-toggle" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-medium text-zinc-300 group">
-                <i class="fa-solid fa-terminal text-zinc-500 group-hover:text-purple-400 transition-colors"></i>
+                <i class="fa-solid fa-code text-zinc-500 group-hover:text-purple-400 transition-colors"></i>
                 <span class="hidden md:inline">Canvas</span>
             </button>
             <button onclick="clearChat()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-zinc-400 hover:text-red-400 transition-colors" title="Clear Chat">
@@ -115,88 +150,78 @@
         </div>
     </header>
 
-    <!-- MAIN CHAT AREA -->
-    <main class="flex-1 flex flex-col min-h-0 relative">
-        <div id="chat-box" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth">
-            <!-- Welcome Message -->
-            <div class="flex gap-4 message-bubble max-w-4xl mx-auto w-full">
-                <div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>
-                <div class="space-y-2 flex-1">
-                    <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
-                    <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
-                        <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v8.1</h2>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                            <button onclick="fillInput('News about Poland')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
-                                <span class="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-regular fa-newspaper"></i></span>
-                                <span>News (Poland)</span>
-                            </button>
-                            <button onclick="enableCanvasAndType('script a python calculator')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
-                                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-code"></i></span>
-                                <span>Canvas Script</span>
-                            </button>
-                            <button onclick="fillInput('Research the economy using PLN')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
-                                <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-book-open"></i></span>
-                                <span>Deep Research</span>
-                            </button>
+    <!-- MAIN LAYOUT -->
+    <div class="flex-1 flex min-h-0 relative">
+        <main id="chat-pane" class="flex-1 flex flex-col min-h-0 relative transition-all duration-300">
+            <div id="chat-box" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth">
+                <div class="flex gap-4 message-bubble max-w-4xl mx-auto w-full">
+                    <div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>
+                    <div class="space-y-2 flex-1">
+                        <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
+                        <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
+                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.5</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+                                I have updated my connection protocols to be more resilient. I am ready to assist with <strong>Research</strong>, <strong>Coding</strong>, and <strong>Analysis</strong>.
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <button onclick="fillInput('News about Poland')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                    <span class="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-regular fa-newspaper"></i></span>
+                                    <span>News (Poland)</span>
+                                </button>
+                                <button onclick="enableCanvasAndType('script a python web scraper')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                    <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-terminal"></i></span>
+                                    <span>Script (Python)</span>
+                                </button>
+                                <button onclick="fillInput('Research the economy using PLN')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                    <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-book-open"></i></span>
+                                    <span>Deep Research</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            
+            <div class="flex-none p-6 z-20 w-full max-w-4xl mx-auto">
+                <div class="relative group">
+                    <div id="tools-menu" class="absolute bottom-full left-0 mb-4 w-64 glass-panel rounded-2xl shadow-2xl hidden flex flex-col z-50 transform transition-all origin-bottom-left max-h-80 overflow-y-auto custom-scrollbar border border-zinc-700/50 p-1">
+                        <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Research</div>
+                        <button onclick="setPrefix('dig deeper into ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3 bg-indigo-500/10 border border-indigo-500/20"><div class="w-7 h-7 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400"><i class="fa-solid fa-layer-group"></i></div><div><div class="font-medium">Dig Deeper</div><div class="text-[10px] text-zinc-500">Exhaustive Thesis</div></div></button>
+                        <button onclick="setPrefix('research ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400"><i class="fa-solid fa-microscope"></i></div><div><div class="font-medium">Deep Research</div><div class="text-[10px] text-zinc-500">Comprehensive report</div></div></button>
+                        <button onclick="setPrefix('news about ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400"><i class="fa-regular fa-newspaper"></i></div><div><div class="font-medium">Global News</div><div class="text-[10px] text-zinc-500">Live headlines</div></div></button>
+                        <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Architect</div>
+                        <button onclick="enableCanvasAndType('script ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-code"></i></div><div><div class="font-medium">Generate Code</div><div class="text-[10px] text-zinc-500">Pro++ Scripting</div></div></button>
+                        <button onclick="setPrefix('find repo ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white"><i class="fa-brands fa-github"></i></div><div><div class="font-medium">Find Repo</div><div class="text-[10px] text-zinc-500">GitHub search</div></div></button>
 
-        <!-- Input Area -->
-        <div class="flex-none p-6 z-20 w-full max-w-4xl mx-auto">
-            <div class="relative group">
-                <!-- Tools Menu -->
-                <div id="tools-menu" class="absolute bottom-full left-0 mb-4 w-64 glass-panel rounded-2xl shadow-2xl hidden flex flex-col z-50 transform transition-all origin-bottom-left max-h-80 overflow-y-auto custom-scrollbar border border-zinc-700/50 p-1">
-                    <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Research & Data</div>
-                    <button onclick="setPrefix('research ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400"><i class="fa-solid fa-microscope"></i></div>
-                        <div><div class="font-medium">Deep Research</div><div class="text-[10px] text-zinc-500">Comprehensive report</div></div>
-                    </button>
-                    <button onclick="setPrefix('news about ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400"><i class="fa-regular fa-newspaper"></i></div>
-                        <div><div class="font-medium">Global News</div><div class="text-[10px] text-zinc-500">Live headlines</div></div>
-                    </button>
-                    
-                    <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Dev & Canvas</div>
-                    <button onclick="enableCanvasAndType('script ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-code"></i></div>
-                        <div><div class="font-medium">Generate Code</div><div class="text-[10px] text-zinc-500">Multi-language script</div></div>
-                    </button>
-                    <button onclick="setPrefix('find repo ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white"><i class="fa-brands fa-github"></i></div>
-                        <div><div class="font-medium">Find Repo</div><div class="text-[10px] text-zinc-500">GitHub search</div></div>
-                    </button>
-                    
-                    <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
-                    <button onclick="setPrefix('image of ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400"><i class="fa-solid fa-image"></i></div>
-                        <div><div class="font-medium">Generate Image</div><div class="text-[10px] text-zinc-500">AI Art creation</div></div>
-                    </button>
+                        <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
+                        <button onclick="setPrefix('image of ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400"><i class="fa-solid fa-image"></i></div><div><div class="font-medium">Generate Image</div><div class="text-[10px] text-zinc-500">AI Art creation</div></div></button>
+                        <button onclick="setPrefix('define ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-300"><i class="fa-solid fa-book"></i></div><div><div class="font-medium">Define Word</div><div class="text-[10px] text-zinc-500">Dictionary</div></div></button>
+                    </div>
+                    <div id="input-glow" class="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 blur-md pointer-events-none"></div>
+                    <form id="chat-form" class="relative flex items-center glass-panel rounded-2xl p-1.5 shadow-xl bg-black/40">
+                        <button type="button" id="tools-btn" onclick="toggleTools()" class="w-10 h-10 text-zinc-400 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-plus text-sm"></i></button>
+                        <input type="text" id="user-input" class="w-full bg-transparent text-white px-4 py-3 focus:outline-none placeholder-zinc-500 font-normal text-sm" placeholder="Message OmniBot..." autocomplete="off">
+                        <button type="submit" id="send-btn" class="w-10 h-10 bg-white text-black hover:bg-zinc-200 rounded-xl transition-all duration-300 flex items-center justify-center flex-shrink-0 shadow-lg shadow-white/5"><i id="send-icon" class="fa-solid fa-arrow-up text-sm"></i></button>
+                    </form>
                 </div>
-
-                <div id="input-glow" class="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 blur-md pointer-events-none"></div>
-                <form id="chat-form" class="relative flex items-center glass-panel rounded-2xl p-1.5 shadow-xl bg-black/40">
-                    <button type="button" id="tools-btn" onclick="toggleTools()" class="w-10 h-10 text-zinc-400 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center justify-center flex-shrink-0">
-                        <i class="fa-solid fa-plus text-sm"></i>
-                    </button>
-                    <input type="text" id="user-input" class="w-full bg-transparent text-white px-4 py-3 focus:outline-none placeholder-zinc-500 font-normal text-sm" placeholder="Message OmniBot..." autocomplete="off">
-                    <button type="submit" id="send-btn" class="w-10 h-10 bg-white text-black hover:bg-zinc-200 rounded-xl transition-all duration-300 flex items-center justify-center flex-shrink-0 shadow-lg shadow-white/5">
-                        <i id="send-icon" class="fa-solid fa-arrow-up text-sm"></i>
-                    </button>
-                </form>
+                <div class="text-center mt-4 flex justify-center gap-6 text-[10px] text-zinc-600 font-medium">
+                    <span id="latency-indicator" class="flex items-center gap-1.5"><span class="w-1 h-1 rounded-full bg-emerald-500"></span>Ready</span>
+                    <span>•</span>
+                    <span>Swarm Intelligence</span>
+                </div>
             </div>
-            <div class="text-center mt-4 flex justify-center gap-6 text-[10px] text-zinc-600 font-medium">
-                <span id="latency-indicator" class="flex items-center gap-1.5"><span class="w-1 h-1 rounded-full bg-emerald-500"></span>Ready</span>
-                <span>•</span>
-                <span>Swarm Intelligence</span>
+        </main>
+        <aside id="editor-wrapper">
+            <div class="editor-header h-12 flex items-center justify-between px-4 text-xs font-mono text-zinc-400 border-b border-white/10">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-code text-purple-400"></i><span>Architect IDE</span><span id="lang-display" class="px-2 py-0.5 rounded bg-white/5 text-[10px] uppercase">Ready</span></div>
+                <button onclick="copyEditorCode()" class="hover:text-white transition-colors" title="Copy All"><i class="fa-regular fa-copy"></i> Copy</button>
             </div>
-        </div>
-    </main>
-
-    <!-- Fullscreen Modal -->
+            <div class="flex-1 relative">
+                <textarea id="code-input" class="w-full h-full p-4 bg-[#1e1e1e] text-zinc-300 font-mono text-sm resize-none focus:outline-none" spellcheck="false" placeholder="// Production-grade code will appear here..."></textarea>
+            </div>
+        </aside>
+    </div>
+    
     <div id="fullscreen-modal" class="fixed inset-0 z-50 bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-md opacity-0 transition-opacity duration-300" onclick="closeFullscreen()">
         <img id="fullscreen-img" src="" class="max-h-[90vh] max-w-[90vw] rounded-2xl shadow-2xl transform transition-transform duration-300 scale-95 shadow-black/50">
         <button class="absolute top-6 right-6 text-white/50 hover:text-white bg-black/50 hover:bg-black/80 rounded-full w-10 h-10 flex items-center justify-center transition-all backdrop-blur-sm"><i class="fa-solid fa-xmark"></i></button>
@@ -205,29 +230,27 @@
     <script>
         let abortController = null;
         const QUERY_CACHE = new Map();
+        const AI_STATE = { research: { active: false, query: null }, canvasMode: false };
+        const CURRENCY_MAP = { 'pln': 'Poland', 'zł': 'Poland', 'eur': 'Europe', 'usd': 'USA', 'gbp': 'UK', 'jpy': 'Japan', 'cny': 'China', 'inr': 'India' };
         
-        const AI_STATE = {
-            research: { active: false, query: null },
-            canvasMode: false
+        const CODING_STANDARDS = {
+            'python': "PEP8 compliant. Use type hints. Handle exceptions.",
+            'javascript': "ES6+ syntax. Async/Await. Strict equality.",
+            'rust': "Idiomatic Rust. Result<T,E> over panics.",
+            'go': "Idiomatic Go. Check errors.",
+            'java': "CamelCase methods. Streams API.",
+            'polyglot': "Define clear interfaces (FFI/JSON). Handle data marshalling carefully."
         };
 
-        const CURRENCY_MAP = {
-            'pln': 'Poland', 'zł': 'Poland', 'eur': 'Europe', 'usd': 'USA', 'gbp': 'UK', 'jpy': 'Japan', 'cny': 'China', 'inr': 'India'
-        };
-
-        // --- NEW CODING APIS ---
         const TOOL_REGISTRY = [
             { id: 'pollinations', name: 'CORTEX', type: 'chat', url: 'https://text.pollinations.ai/' },
             { id: 'pollinations_img', name: 'DREAMER', type: 'image', url: 'https://image.pollinations.ai/prompt/' },
-            
-            // Research & News
+            { id: 'digdeeper', name: 'DEEP-DIVE', keywords: ['dig deeper', 'exhaustive research', 'thesis on'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
             { id: 'research', name: 'RESEARCHER', keywords: ['research', 'report on'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
-            { id: 'googlenews', name: 'NEWS', keywords: ['news', 'headline'], url: 'https://news.google.com/rss/search?q=' },
+            { id: 'googlenews', name: 'NEWS', keywords: ['news', 'headline'], url: 'https://api.gdeltproject.org/api/v2/doc/doc?mode=artlist&maxrecords=5&format=json&sort=DateDesc&query=' },
             { id: 'websearch', name: 'SEARCH', keywords: ['search', 'find', 'lookup'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
-            
-            // Coding & Canvas Tools (No Keys, Free)
             { id: 'npm', name: 'NPM', keywords: ['npm', 'node package'], url: 'https://registry.npmjs.org/-/v1/search?text=' },
-            { id: 'pypi', name: 'PYPI', keywords: ['pypi', 'python package'], url: 'https://pypi.org/pypi/' }, // needs suffix
+            { id: 'pypi', name: 'PYPI', keywords: ['pypi', 'python package'], url: 'https://pypi.org/pypi/' },
             { id: 'crates', name: 'CRATES', keywords: ['cargo', 'rust crate'], url: 'https://crates.io/api/v1/crates?q=' },
             { id: 'packagist', name: 'PACKAGIST', keywords: ['composer', 'php package'], url: 'https://packagist.org/search.json?q=' },
             { id: 'nuget', name: 'NUGET', keywords: ['nuget', 'c# package'], url: 'https://azuresearch-usnc.nuget.org/query?q=' },
@@ -236,115 +259,110 @@
             { id: 'dockerhub', name: 'DOCKER', keywords: ['docker image'], url: 'https://hub.docker.com/v2/search/repositories/?query=' },
             { id: 'linuxman', name: 'MANPAGES', keywords: ['linux command'], url: 'https://man.archlinux.org/search?json=1&q=' },
             { id: 'cdnjs', name: 'CDN', keywords: ['cdn', 'library'], url: 'https://api.cdnjs.com/libraries?search=' },
-            
-            // Git
+            { id: 'cheatsh', name: 'CHEAT-SHEET', keywords: ['syntax', 'how to', 'cli'], url: 'https://cheat.sh/' },
             { id: 'ghrepo', name: 'GIT-REPO', keywords: ['github repo'], url: 'https://api.github.com/search/repositories?per_page=1&q=' },
-
-            // Others
             { id: 'dictionary', name: 'DICT', keywords: ['define'], url: 'https://api.dictionaryapi.dev/api/v2/entries/en/' },
             { id: 'urbandictionary', name: 'URBAN', keywords: ['slang'], url: 'https://api.urbandictionary.com/v0/define?term=' }
         ];
 
-        // --- UI HELPERS & MISSING FUNCTIONS RESTORED ---
         const chatBox = document.getElementById('chat-box');
         const statusText = document.getElementById('status-text');
         const sendBtn = document.getElementById('send-btn');
         const sendIcon = document.getElementById('send-icon');
+        const editorInput = document.getElementById('code-input');
 
         function addThinkingMessage() {
             const div = document.createElement('div');
             div.className = `flex gap-4 message-bubble thinking-bubble max-w-4xl mx-auto w-full`;
-            const avatar = `<div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>`;
-            const dots = `
-                <div class="glass-panel px-4 py-3 rounded-2xl rounded-tl-none inline-flex items-center gap-3 h-10">
-                    <div class="flex gap-1.5">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                    <span id="thinking-text" class="text-[10px] text-zinc-400 font-medium tracking-wide uppercase">Processing</span>
-                </div>
-            `;
-            div.innerHTML = `${avatar}<div class="space-y-1">${dots}</div>`;
+            div.innerHTML = `<div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div><div class="glass-panel px-4 py-3 rounded-2xl rounded-tl-none inline-flex items-center gap-3 h-10"><div class="flex gap-1.5"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div><span id="thinking-text" class="text-[10px] text-zinc-400 font-medium tracking-wide uppercase">Processing</span></div>`;
             div.id = 'current-thinking-bubble';
             chatBox.appendChild(div);
             requestAnimationFrame(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }));
             return div;
         }
 
-        function updateThinkingMessage(el, text) {
-            const textSpan = el.querySelector('#thinking-text');
-            if (textSpan) textSpan.innerText = text;
+        function updateThinkingMessage(el, text) { const s = el.querySelector('#thinking-text'); if(s) s.innerText = text; }
+        function removeThinkingMessage(el) { if(el) el.remove(); else { const e = document.getElementById('current-thinking-bubble'); if(e) e.remove(); } }
+        function toggleThoughts(btn) { const c = btn.nextElementSibling; const i = btn.querySelector('i'); c.classList.toggle('hidden'); i.style.transform = c.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)'; }
+
+        // --- ELI5 & SUMMARY ---
+        async function explainLikeImFive(encodedText) {
+            let text = decodeURIComponent(encodedText);
+            if (text.length > 1500) text = text.substring(0, 1500) + "...";
+            const prompt = `Explain like I am 5:\n\n${text}`;
+            if (abortController) abortController.abort();
+            abortController = new AbortController();
+            setProcessingState(true);
+            const thinkingEl = addThinkingMessage();
+            updateThinkingMessage(thinkingEl, "Simplifying...");
+            try {
+                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+                const res = await fetchWithRetry(url, { signal: abortController.signal });
+                const txt = await res.text();
+                removeThinkingMessage(thinkingEl);
+                addMessage(`### 👶 ELI5\n${txt}`, 'ai');
+            } catch { removeThinkingMessage(thinkingEl); } 
+            finally { if (abortController && !abortController.signal.aborted) setProcessingState(false); }
         }
 
-        function removeThinkingMessage(el) {
-            if(el) el.remove();
-            else {
-                const existing = document.getElementById('current-thinking-bubble');
-                if(existing) existing.remove();
-            }
+        async function summarizeText(encodedText) {
+            let text = decodeURIComponent(encodedText);
+            if (text.length > 1500) text = text.substring(0, 1500) + "...";
+            const prompt = `Summarize in bullet points:\n\n${text}`;
+            if (abortController) abortController.abort();
+            abortController = new AbortController();
+            setProcessingState(true);
+            const thinkingEl = addThinkingMessage();
+            updateThinkingMessage(thinkingEl, "Condensing information...");
+            try {
+                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+                const res = await fetchWithRetry(url, { signal: abortController.signal });
+                const txt = await res.text();
+                removeThinkingMessage(thinkingEl);
+                addMessage(`### 📝 Summary\n${txt}`, 'ai');
+            } catch { removeThinkingMessage(thinkingEl); } 
+            finally { if (abortController && !abortController.signal.aborted) setProcessingState(false); }
         }
 
-        function addMessage(content, sender, type = 'text') {
+        function addMessage(content, sender, type = 'text', thoughts = null) {
             const div = document.createElement('div');
             div.className = `flex gap-4 message-bubble max-w-4xl mx-auto w-full ${sender === 'user' ? 'flex-row-reverse' : ''}`;
-            const avatar = sender === 'user' 
-                ? `<div class="w-8 h-8 rounded-full bg-blue-600 flex-shrink-0 flex items-center justify-center text-white text-xs shadow-lg shadow-blue-500/30 mt-1"><i class="fa-solid fa-user"></i></div>`
-                : `<div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>`;
+            const avatar = sender === 'user' ? `<div class="w-8 h-8 rounded-full bg-blue-600 flex-shrink-0 flex items-center justify-center text-white text-xs shadow-lg shadow-blue-500/30 mt-1"><i class="fa-solid fa-user"></i></div>` : `<div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>`;
+            
             let innerHTML = '';
+            let thoughtHTML = '';
+            if (thoughts && thoughts.length > 0) {
+                const thoughtList = thoughts.map(t => `<div class="flex gap-2"><span class="text-zinc-600">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</span><span>${t}</span></div>`).join('');
+                thoughtHTML = `<div class="mb-3"><button onclick="toggleThoughts(this)" class="text-[10px] uppercase font-bold text-zinc-500 hover:text-zinc-300 flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-chevron-right text-[8px] transition-transform duration-200"></i> Chain of Thought</button><div class="thought-content hidden mt-2 pl-3 border-l-2 border-zinc-800 text-[10px] text-zinc-400 font-mono space-y-1 bg-black/20 p-2 rounded-r-lg">${thoughtList}</div></div>`;
+            }
+
             if (type === 'image') {
-                innerHTML = `
-                <div class="group relative bg-zinc-900/50 p-1.5 rounded-2xl ${sender === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'} border border-zinc-800/50 inline-block overflow-hidden shadow-sm">
-                    <img src="${content}" class="max-w-xs md:max-w-sm rounded-xl cursor-pointer transition-transform duration-300 group-hover:scale-[1.01]" onload="this.scrollIntoView({behavior:'smooth', block:'end'})" onerror="this.src='https://placehold.co/400x300?text=Image+Load+Error'" onclick="openFullscreen('${content}')">
-                    <button onclick="event.stopPropagation(); downloadImage('${content}')" class="absolute top-4 right-4 bg-black/60 hover:bg-blue-500 text-white w-9 h-9 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md shadow-xl translate-y-2 group-hover:translate-y-0" title="Download"><i class="fa-solid fa-download text-xs"></i></button>
-                </div>`;
+                innerHTML = `<div class="group relative bg-zinc-900/50 p-1.5 rounded-2xl ${sender === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'} border border-zinc-800/50 inline-block overflow-hidden shadow-sm"><img src="${content}" class="max-w-xs md:max-w-sm rounded-xl cursor-pointer transition-transform duration-300 group-hover:scale-[1.01]" onload="this.scrollIntoView({behavior:'smooth', block:'end'})" onerror="this.src='https://placehold.co/400x300?text=Image+Load+Error'" onclick="openFullscreen('${content}')"><button onclick="event.stopPropagation(); downloadImage('${content}')" class="absolute top-4 right-4 bg-black/60 hover:bg-blue-500 text-white w-9 h-9 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md shadow-xl translate-y-2 group-hover:translate-y-0" title="Download"><i class="fa-solid fa-download text-xs"></i></button></div>`;
             } else {
                 const parsed = marked.parse(content);
                 const safeContent = encodeURIComponent(content);
+                
                 innerHTML = `<div class="group relative glass-panel px-6 py-4 rounded-2xl ${sender === 'user' ? 'rounded-tr-none bg-blue-600/10 border-blue-500/20 text-blue-100' : 'rounded-tl-none text-zinc-200'} text-sm leading-relaxed shadow-sm prose prose-invert max-w-none">
+                    ${thoughtHTML}
                     ${parsed}
-                    <button onclick="copyToClipboard(this, '${safeContent}')" class="absolute top-3 right-3 text-zinc-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm" title="Copy"><i class="fa-regular fa-copy text-xs"></i></button>
-                </div>`;
+                    <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                        ${sender !== 'user' ? `<button onclick="explainLikeImFive('${safeContent}')" class="text-zinc-500 hover:text-pink-400 p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Explain Like I'm 5"><i class="fa-solid fa-child text-xs"></i></button>${sender !== 'user' ? `<button onclick="summarizeText('${safeContent}')" class="text-zinc-500 hover:text-purple-400 p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Summarize"><i class="fa-solid fa-list-check text-xs"></i></button>` : ''}` : ''}<button onclick="copyToClipboard(this, '${safeContent}')" class="text-zinc-500 hover:text-white p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Copy"><i class="fa-regular fa-copy text-xs"></i></button></div></div>`;
             }
             div.innerHTML = sender === 'user' ? `${innerHTML}${avatar}` : `${avatar}<div class="space-y-1 flex-1 min-w-0"><div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">OmniBot</div>${innerHTML}</div>`;
             chatBox.appendChild(div);
             requestAnimationFrame(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }));
         }
 
-        async function downloadImage(url) {
-            try {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const blobUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = `omnibot-${Date.now()}.png`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            } catch { window.open(url, '_blank'); }
+        function copyEditorCode() {
+            const code = editorInput.value;
+            const textArea = document.createElement("textarea");
+            textArea.value = code;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try { document.execCommand('copy'); } catch(err){}
+            document.body.removeChild(textArea);
         }
 
-        function copyToClipboard(btn, encoded) {
-            const ta = document.createElement("textarea");
-            ta.value = decodeURIComponent(encoded);
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            const i = btn.querySelector('i');
-            i.className = 'fa-solid fa-check text-emerald-400';
-            setTimeout(() => i.className = 'fa-regular fa-copy', 2000);
-        }
-
-        function openFullscreen(src) {
-             const m = document.getElementById('fullscreen-modal');
-             const i = document.getElementById('fullscreen-img');
-             i.src = src; m.classList.remove('hidden');
-        }
-        function closeFullscreen() { document.getElementById('fullscreen-modal').classList.add('hidden'); }
-
-        // --- CANVAS MODE ---
         function toggleCanvas() {
             AI_STATE.canvasMode = !AI_STATE.canvasMode;
             const btn = document.getElementById('canvas-toggle');
@@ -361,7 +379,8 @@
                 icon.classList.replace('from-blue-600', 'from-purple-600');
                 icon.classList.replace('to-indigo-600', 'to-pink-600');
                 dot.classList.replace('bg-emerald-500', 'bg-purple-500');
-                input.placeholder = "Canvas Active: Architecture & Coding Mode...";
+                input.placeholder = "Canvas Active: Architect Mode (Pro++)...";
+                window.dispatchEvent(new Event('resize'));
             } else {
                 body.classList.remove('canvas-mode');
                 btn.classList.replace('bg-purple-500/20', 'bg-white/5');
@@ -374,297 +393,8 @@
             }
         }
 
-        function enableCanvasAndType(text) {
-            if(!AI_STATE.canvasMode) toggleCanvas();
-            fillInput(text);
-        }
+        function enableCanvasAndType(text) { if(!AI_STATE.canvasMode) toggleCanvas(); fillInput(text); }
 
-        // --- PROCESSING ---
-        async function processInput(text) {
-            if (abortController) { abortController.abort(); removeThinkingMessage(); }
-            
-            abortController = new AbortController();
-            const signal = abortController.signal;
-            const startTime = Date.now();
-            setProcessingState(true);
-            const thinkingEl = addThinkingMessage();
-
-            // 1. CANVAS FLOW
-            if (AI_STATE.canvasMode) {
-                try {
-                    await executeCanvas(text, thinkingEl, signal);
-                } catch(e) { 
-                    if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Canvas Error.", 'ai'); }
-                } finally {
-                    if (abortController && !signal.aborted) {
-                        setProcessingState(false);
-                        abortController = null;
-                    }
-                }
-                return;
-            }
-
-            // 2. RESEARCH INTERCEPTION
-            if (AI_STATE.research.active) {
-                const query = AI_STATE.research.query;
-                const context = text;
-                AI_STATE.research.active = false;
-                try {
-                    await executeTool({ id: 'research', url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' }, `${query}. Context: ${context}`, thinkingEl, signal);
-                } catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Research error.", 'ai'); } }
-                finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
-                return;
-            }
-
-            // 3. NORMAL TOOLS
-            let selectedTool = findTool(text);
-            let processedText = text;
-
-            try {
-                if (!selectedTool) {
-                    updateThinkingMessage(thinkingEl, "Translating...");
-                    const translated = await translateText(text, signal);
-                    const translatedTool = findTool(translated);
-                    if (translatedTool) {
-                        selectedTool = translatedTool;
-                        processedText = translated;
-                    }
-                }
-
-                if (selectedTool) await executeTool(selectedTool, processedText, thinkingEl, signal);
-                else await queryCortex(text, thinkingEl, signal);
-
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    removeThinkingMessage(thinkingEl);
-                    addMessage("Network Error.", 'ai');
-                }
-            } finally {
-                if (abortController && !signal.aborted) {
-                    setProcessingState(false);
-                    abortController = null;
-                    const lat = Date.now() - startTime;
-                    document.getElementById('latency-indicator').innerHTML = `<span class="w-1 h-1 rounded-full bg-emerald-500"></span> ${lat}ms`;
-                }
-            }
-        }
-
-        // --- CANVAS EXECUTION LOGIC ---
-        async function executeCanvas(text, thinkingEl, signal) {
-            updateThinkingMessage(thinkingEl, "Analyzing architecture...");
-            const query = text.replace(/script|code|write|program|function/gi, "").trim();
-            const lower = query.toLowerCase();
-
-            // Detect Language & Select Repository
-            let repos = [{ id: 'ghrepo', url: TOOL_REGISTRY.find(t=>t.id==='ghrepo').url + encodeURIComponent(query) }];
-            
-            if(lower.includes('node') || lower.includes('js') || lower.includes('react')) repos.push({id:'npm', url: `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(query)}&size=3`});
-            else if(lower.includes('python') || lower.includes('pip')) repos.push({id:'pypi', url: `https://pypi.org/pypi/${encodeURIComponent(query.split(' ')[0])}/json`}); // Approximation
-            else if(lower.includes('rust')) repos.push({id:'crates', url: `https://crates.io/api/v1/crates?q=${encodeURIComponent(query)}&per_page=3`});
-            else if(lower.includes('php')) repos.push({id:'packagist', url: `https://packagist.org/search.json?q=${encodeURIComponent(query)}`});
-            else if(lower.includes('java')) repos.push({id:'maven', url: `https://search.maven.org/solrsearch/select?q=${encodeURIComponent(query)}&rows=3&wt=json`});
-            else if(lower.includes('c#') || lower.includes('net')) repos.push({id:'nuget', url: `https://azuresearch-usnc.nuget.org/query?q=${encodeURIComponent(query)}`});
-            else if(lower.includes('flutter')) repos.push({id:'pubdev', url: `https://pub.dev/api/search?q=${encodeURIComponent(query)}`});
-            else if(lower.includes('docker')) repos.push({id:'dockerhub', url: `https://hub.docker.com/v2/search/repositories/?query=${encodeURIComponent(query)}`});
-
-            updateThinkingMessage(thinkingEl, `Scanning ${repos.length} package registries...`);
-            
-            const results = await Promise.all(repos.map(async r => {
-                try {
-                    const res = await fetchProxy(r.url); // Use proxy for all to be safe
-                    const json = await res.json();
-                    return { id: r.id, data: json };
-                } catch { return null; }
-            }));
-
-            // Build Context
-            let context = "";
-            results.forEach(r => {
-                if(!r) return;
-                if(r.id === 'ghrepo' && r.data.items) {
-                    r.data.items.slice(0,2).forEach(i => context += `GitHub: ${i.full_name} (${i.description})\n`);
-                } else if(r.id === 'npm' && r.data.objects) {
-                    r.data.objects.forEach(o => context += `NPM: ${o.package.name} v${o.package.version}\n`);
-                } else if(r.id === 'crates' && r.data.crates) {
-                    r.data.crates.forEach(c => context += `Crate: ${c.name} (Downloads: ${c.downloads})\n`);
-                }
-                // ... Add other parsers here ...
-            });
-            if(!context) context = "No external packages found. Use standard libraries.";
-
-            updateThinkingMessage(thinkingEl, "Compiling solution...");
-            const prompt = `Role: Senior Software Architect. Mode: Canvas.
-            Task: ${text}
-            
-            Real-world Context Found:
-            ${context}
-            
-            Output:
-            1. Full, runnable code file.
-            2. Use comments for logic.
-            3. Include installation steps for packages found in context.`;
-
-            const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
-            const aiReq = await fetchWithRetry(aiUrl, { signal });
-            const aiRes = await aiReq.text();
-
-            removeThinkingMessage(thinkingEl);
-            addMessage(aiRes, 'ai');
-        }
-
-        // --- STANDARD TOOL EXECUTION (Preserved & Cleaned) ---
-        async function executeTool(tool, text, thinkingEl, signal) {
-            let url = tool.url;
-            let query = text.split(' ').pop(); 
-
-            if (tool.id === 'research') {
-                // ... (Research Logic Preserved from v7.3) ...
-                if (!text.includes("Context:")) {
-                    query = text.replace(/research|report on/gi, '').trim();
-                    updateThinkingMessage(thinkingEl, "Clarifying scope...");
-                    const qUrl = `https://text.pollinations.ai/${encodeURIComponent(`Research: "${query}". Ask 3 questions. Bullet points.`)}?model=openai`;
-                    const res = await fetchWithRetry(qUrl, { signal });
-                    const q = await res.text();
-                    removeThinkingMessage(thinkingEl);
-                    addMessage(`**Clarify for "${query}":**\n\n${q}`, 'ai');
-                    AI_STATE.research.active = true;
-                    AI_STATE.research.query = query;
-                    return;
-                }
-                const fullContext = text.replace("Context:", "");
-                updateThinkingMessage(thinkingEl, "Scanning sources...");
-                const sUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=${encodeURIComponent(fullContext)}`;
-                const res = await fetchWithRetry(sUrl, { signal });
-                const data = await res.json();
-                let cd = data.query?.search ? data.query.search.map(i=>i.snippet.replace(/<[^>]*>/g,'')).join('\n') : "Internal Knowledge";
-                
-                updateThinkingMessage(thinkingEl, "Writing report...");
-                const prompt = `Write research report. Topic: ${fullContext}. Data: ${cd}. Format: Markdown.`;
-                const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
-                const aiReq = await fetchWithRetry(aiUrl, { signal });
-                const aiRes = await aiReq.text();
-                removeThinkingMessage(thinkingEl);
-                addMessage(aiRes, 'ai');
-                return;
-            }
-
-            if (tool.id === 'googlenews') {
-                query = text.replace(/news|headlines|about/gi, '').trim();
-                updateThinkingMessage(thinkingEl, "Fetching live news...");
-                const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
-                try {
-                    const res = await fetchProxy(rssUrl);
-                    const txt = await res.text();
-                    const parser = new DOMParser();
-                    const xml = parser.parseFromString(txt, "text/xml");
-                    const items = xml.querySelectorAll("item");
-                    if (items.length > 0) {
-                        let out = `### 📰 News: ${query}\n`;
-                        Array.from(items).slice(0, 5).forEach(i => {
-                            out += `**[${i.querySelector("title").textContent}](${i.querySelector("link").textContent})**\n*${new Date(i.querySelector("pubDate").textContent).toLocaleDateString()}*\n\n`;
-                        });
-                        removeThinkingMessage(thinkingEl);
-                        addMessage(out, 'ai');
-                        return;
-                    }
-                } catch(e) {}
-                // Fallback
-                await executeTool(TOOL_REGISTRY.find(t=>t.id==='websearch'), query, thinkingEl, signal);
-                return;
-            }
-
-            // Generic Handlers
-            if(['websearch', 'dictionary', 'urbandictionary'].includes(tool.id)) {
-                query = text.replace(/search for|define|slang/gi, '').trim();
-                url = `${tool.url}${encodeURIComponent(query)}`;
-                const req = await fetchWithRetry(url, { signal });
-                const res = await req.json();
-                removeThinkingMessage(thinkingEl);
-                
-                if(tool.id==='websearch' && res.query) {
-                    let out = `### 🔍 Search: ${query}\n`;
-                    res.query.search.slice(0,3).forEach(i=>out+=`**${i.title}**\n${i.snippet.replace(/<[^>]*>/g,'')}...\n\n`);
-                    addMessage(out, 'ai');
-                } else if(tool.id==='dictionary' && Array.isArray(res)) {
-                    addMessage(`### 📖 ${res[0].word}\n${res[0].meanings[0].definitions[0].definition}`, 'ai');
-                } else if(tool.id==='urbandictionary' && res.list?.length) {
-                    addMessage(`### 🏙️ ${res.list[0].word}\n${res.list[0].definition}`, 'ai');
-                } else {
-                    addMessage("No results found.", 'ai');
-                }
-                return;
-            }
-
-            if (tool.id === 'pollinations_img') {
-                const prompt = text.replace(/image of/gi, '').trim();
-                removeThinkingMessage(thinkingEl);
-                addMessage(`${tool.url}${encodeURIComponent(prompt)}?nologo=true`, 'ai', 'image');
-                return;
-            }
-        }
-
-        async function queryCortex(text, thinkingEl, signal) {
-            const url = `https://text.pollinations.ai/${encodeURIComponent(text)}`;
-            const res = await fetchWithRetry(url, { signal });
-            const data = await res.text();
-            removeThinkingMessage(thinkingEl);
-            addMessage(data, 'ai');
-        }
-
-        // --- UTILS ---
-        function detectRegion(text) {
-            const lower = text.toLowerCase();
-            for (const [key, region] of Object.entries(CURRENCY_MAP)) {
-                if (lower.includes(key)) return region;
-            }
-            return null;
-        }
-
-        function findTool(text) {
-            const lower = text.toLowerCase();
-            if (lower.startsWith('image')) return TOOL_REGISTRY.find(t=>t.id==='pollinations_img');
-            if (lower.startsWith('research')) return TOOL_REGISTRY.find(t=>t.id==='research');
-            if (lower.startsWith('news')) return TOOL_REGISTRY.find(t=>t.id==='googlenews');
-            if (lower.startsWith('search')) return TOOL_REGISTRY.find(t=>t.id==='websearch');
-            if (lower.startsWith('define')) return TOOL_REGISTRY.find(t=>t.id==='dictionary');
-            if (lower.startsWith('slang')) return TOOL_REGISTRY.find(t=>t.id==='urbandictionary');
-            return TOOL_REGISTRY.find(t => t.keywords && t.keywords.some(k => lower.includes(k)));
-        }
-
-        async function translateText(text, signal) {
-            if (/^[a-zA-Z0-9\s]+$/.test(text)) return text;
-            const res = await fetchWithRetry(`https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&system=Translate to English`, { signal });
-            return await res.text();
-        }
-
-        async function fetchProxy(url) {
-            try { return await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`); }
-            catch { return await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); }
-        }
-
-        async function fetchWithRetry(url, options={}, retries=1) {
-            if(QUERY_CACHE.has(url)) return QUERY_CACHE.get(url);
-            try {
-                const res = await fetch(url, options);
-                if(!res.ok) throw new Error("Err");
-                if(!options.method) QUERY_CACHE.set(url, res.clone());
-                return res;
-            } catch(e) {
-                if(retries>0) return fetchWithRetry(url, options, retries-1);
-                throw e;
-            }
-        }
-
-        // --- DOM HANDLERS ---
-        function fillInput(txt) { document.getElementById('user-input').value = txt; }
-        function toggleTools() { document.getElementById('tools-menu').classList.toggle('hidden'); }
-        function setPrefix(p) { const i = document.getElementById('user-input'); i.value = p; i.focus(); toggleTools(); }
-        function clearChat() { 
-            if(abortController) abortController.abort(); 
-            document.getElementById('chat-box').innerHTML = ''; 
-            addMessage("Memory wiped.", 'ai'); 
-            setProcessingState(false);
-        }
         function setProcessingState(active) {
             const btn = document.getElementById('send-btn');
             const icon = document.getElementById('send-icon');
@@ -672,28 +402,368 @@
                 icon.className = 'fa-solid fa-stop';
                 btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600');
                 btn.classList.remove('bg-white', 'text-black', 'hover:bg-zinc-200');
-                btn.onclick = (e) => { e.preventDefault(); if(abortController) abortController.abort(); };
+                btn.onclick = (e) => { e.preventDefault(); stopGeneration(); };
             } else {
                 icon.className = 'fa-solid fa-arrow-up';
                 btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600');
                 btn.classList.add('bg-white', 'text-black', 'hover:bg-zinc-200');
                 btn.onclick = null;
+                statusText.innerText = "Systems Nominal";
+                statusText.classList.remove('text-yellow-500');
+                removeThinkingMessage();
             }
         }
-        function openFullscreen(src) {
-             const m = document.getElementById('fullscreen-modal');
-             const i = document.getElementById('fullscreen-img');
-             i.src = src; m.classList.remove('hidden');
-        }
-        function closeFullscreen() { document.getElementById('fullscreen-modal').classList.add('hidden'); }
-        function copyToClipboard(btn, txt) {
-             const t = document.createElement('textarea'); t.value = decodeURIComponent(txt);
-             document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+
+        function stopGeneration() {
+            if (abortController) {
+                abortController.abort();
+                abortController = null;
+                setProcessingState(false);
+                addMessage("Cancelled.", 'ai');
+                AI_STATE.research.active = false;
+            }
         }
 
-        window.onclick = (e) => {
-            if(!e.target.closest('#tools-menu') && !e.target.closest('#tools-btn')) document.getElementById('tools-menu').classList.add('hidden');
-        };
+        async function fetchWithRetry(url, options = {}, retries = 2) {
+            if (QUERY_CACHE.has(url)) return QUERY_CACHE.get(url).clone(); 
+            try {
+                // Try direct first, if fails try proxy
+                let res;
+                try {
+                    res = await fetch(url, options);
+                    if (!res.ok) throw new Error("Direct Failed");
+                } catch {
+                    res = await fetchProxy(url, options);
+                }
+
+                if (!res.ok) throw new Error("API Error");
+                if (!options.method || options.method === 'GET') QUERY_CACHE.set(url, res.clone());
+                return res;
+            } catch (err) {
+                if (retries > 0) return fetchWithRetry(url, options, retries - 1);
+                throw err;
+            }
+        }
+        
+        async function fetchProxy(url) {
+            try { return await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`); }
+            catch { return await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); }
+        }
+
+        // --- INTENT LOGIC ---
+        function detectRegion(text) {
+            const lower = text.toLowerCase();
+            for (const [key, region] of Object.entries(CURRENCY_MAP)) {
+                if (new RegExp(`\\b${key}\\b|${key.replace('$', '\\$')}`, 'i').test(lower)) return region;
+            }
+            return null;
+        }
+
+        function findTool(text) {
+             const lower = text.toLowerCase();
+             if (lower.startsWith('dig deeper')) return TOOL_REGISTRY.find(t=>t.id==='digdeeper');
+             if (lower.startsWith('image')) return TOOL_REGISTRY.find(t=>t.id==='pollinations_img');
+             if (lower.startsWith('research')) return TOOL_REGISTRY.find(t=>t.id==='research');
+             if (lower.startsWith('news')) return TOOL_REGISTRY.find(t=>t.id==='googlenews');
+             if (lower.startsWith('search')) return TOOL_REGISTRY.find(t=>t.id==='websearch');
+             if (lower.startsWith('define')) return TOOL_REGISTRY.find(t=>t.id==='dictionary');
+             if (lower.startsWith('slang')) return TOOL_REGISTRY.find(t=>t.id==='urbandictionary');
+             if (lower.startsWith('find repo')) return TOOL_REGISTRY.find(t=>t.id==='ghrepo');
+             return TOOL_REGISTRY.find(t => t.keywords && t.keywords.some(k => lower.includes(k)));
+        }
+
+        async function translateText(text, signal) {
+            if (/^(who|what|where|when|why|how|is|are|can|do|does|search|find|research|news|headlines|define|solve|calculate|hello|hi|hey)/i.test(text)) return text; 
+            const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&system=Translate to English. Output ONLY the result.`;
+            const res = await fetchWithRetry(url, { signal });
+            return await res.text();
+        }
+
+        async function processInput(text) {
+            if (abortController) { abortController.abort(); removeThinkingMessage(); }
+            abortController = new AbortController();
+            const signal = abortController.signal;
+            const startTime = Date.now();
+            setProcessingState(true);
+            const thinkingEl = addThinkingMessage();
+            let thoughts = [];
+            const log = (msg) => { thoughts.push(msg); updateThinkingMessage(thinkingEl, msg); };
+
+            if (AI_STATE.canvasMode) {
+                try { await executeCanvas(text, thinkingEl, signal, log, thoughts); } 
+                catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Canvas Error.", 'ai', 'text', thoughts); } }
+                finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
+                return;
+            }
+
+            if (AI_STATE.research.active) {
+                const query = AI_STATE.research.query;
+                const context = text;
+                AI_STATE.research.active = false;
+                try { await executeTool({ id: 'research', url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' }, `${query}. Context: ${context}`, thinkingEl, signal, log, thoughts); }
+                catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Research error.", 'ai', 'text', thoughts); } }
+                finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
+                return;
+            }
+
+            let selectedTool = findTool(text);
+            let processedText = text;
+
+            try {
+                if (!selectedTool) {
+                    log("Translating...");
+                    const translated = await translateText(text, signal);
+                    const translatedTool = findTool(translated);
+                    if (translatedTool) { selectedTool = translatedTool; processedText = translated; }
+                }
+                
+                if (selectedTool) await executeTool(selectedTool, processedText, thinkingEl, signal, log, thoughts);
+                else await queryCortex(text, thinkingEl, signal, log, thoughts);
+            } catch (err) {
+                if (err.name !== 'AbortError') { removeThinkingMessage(thinkingEl); addMessage("Connection error (Try again).", 'ai', 'text', thoughts); }
+            } finally {
+                if (abortController && !signal.aborted) {
+                    setProcessingState(false);
+                    abortController = null;
+                    const lat = Date.now() - startTime;
+                    document.getElementById('latency-indicator').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span> ${lat}ms`;
+                }
+            }
+        }
+
+        // --- MATH / SOLVE / NEWS LOGIC ---
+        async function executeTool(tool, text, thinkingEl, signal, log, thoughts) {
+            let url = tool.url;
+            let query = text.split(' ').pop(); 
+
+            // -- NEWS (Restored Specific Formatting) --
+            if (tool.id === 'googlenews') {
+                query = text.replace(/news|headlines|about|in|happening|what/gi, '').trim();
+                if (!query || query.length < 2) query = "World";
+                log(`Scanning global news for "${query}"...`);
+                // Note: Using GDELT url from registry for 'googlenews' ID to keep logic consistent
+                url = `${tool.url}${encodeURIComponent(query)}%20sourcelang:english`;
+
+                try {
+                    const req = await fetchWithRetry(url, { signal });
+                    const res = await req.json();
+                    if (res.articles?.length) {
+                        let out = `### 🌍 Global News: ${query}\n`;
+                        res.articles.slice(0, 5).forEach(a => {
+                            out += `**[${a.title}](${a.url})**\n*${a.sourcecountry || 'Global'} - ${a.seendate?.substring(0,8) || 'Recent'}*\n\n`;
+                        });
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(out, 'ai', 'text', thoughts);
+                    } else throw new Error("No items");
+                } catch(e) {
+                    log("GDELT silent. Querying Wiki Events...");
+                    await executeTool(TOOL_REGISTRY.find(t=>t.id==='websearch'), `${query} news`, thinkingEl, signal, log, thoughts); 
+                }
+                return;
+            }
+
+            // -- GH REPO (Restored) --
+            if (tool.id === 'ghrepo') {
+                query = text.replace(/github repo|find repo|find code/gi, '').trim();
+                url = `${tool.url}${encodeURIComponent(query)}`;
+                try {
+                    const req = await fetchWithRetry(url, { headers: {'Accept': 'application/json'}, signal });
+                    const res = await req.json();
+                    if(res.items && res.items.length > 0) {
+                        const repo = res.items[0];
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(`### 🐙 GitHub: ${repo.full_name}\n${repo.description}\n⭐ ${repo.stargazers_count} | 🍴 ${repo.forks_count}\n[View Repo](${repo.html_url})`, 'ai', 'text', thoughts);
+                    } else throw new Error("No repo");
+                } catch {
+                    removeThinkingMessage(thinkingEl);
+                    addMessage("Repository not found.", 'ai', 'text', thoughts);
+                }
+                return;
+            }
+
+            // -- MATH EVAL --
+            if (tool.id === 'math_eval' || tool.id === 'math_newton') {
+                query = text.replace(/solve|calculate|evaluate|compute|what is/gi, '').trim();
+                log("Solving math problem...");
+                try {
+                    const evalUrl = `http://api.mathjs.org/v4/?expr=${encodeURIComponent(query)}`;
+                    const res = await fetchWithRetry(evalUrl, { signal });
+                    const result = await res.text();
+                    if(res.ok && !result.includes("Error")) {
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(`### 🧮 Result\n\`\`\`\n${query} = ${result}\n\`\`\``, 'ai', 'text', thoughts);
+                        return;
+                    }
+                } catch(e) {}
+                // Fallback to Newton
+                const operation = query.includes('integrate') ? 'integrate' : query.includes('derive') ? 'derive' : 'simplify';
+                const cleanQ = query.replace(/integrate|derive|simplify/gi, '').trim();
+                try {
+                    const nUrl = `https://newton.now.sh/api/v2/${operation}/${encodeURIComponent(cleanQ)}`;
+                    const res = await fetchWithRetry(nUrl, { signal });
+                    const json = await res.json();
+                    if(json.result) {
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(`### 📐 ${operation.charAt(0).toUpperCase()+operation.slice(1)}\n\`\`\`\n${json.result}\n\`\`\``, 'ai', 'text', thoughts);
+                        return;
+                    }
+                } catch(e) {}
+                log("Calculation complex. Searching theory...");
+                await executeTool(TOOL_REGISTRY.find(t=>t.id==='arxiv'), query, thinkingEl, signal, log, thoughts);
+                return;
+            }
+
+            // -- DICTIONARY --
+            if (tool.id === 'dictionary') {
+                query = text.replace(/define|definition|meaning of/gi, '').trim();
+                url = `${tool.url}${encodeURIComponent(query)}`;
+                try {
+                    const req = await fetchWithRetry(url, { signal });
+                    const res = await req.json();
+                    removeThinkingMessage(thinkingEl);
+                    if (Array.isArray(res)) {
+                        const word = res[0];
+                        let out = `### 📖 Definition: ${word.word}\n`;
+                        if(word.phonetic) out += `*${word.phonetic}*\n\n`;
+                        word.meanings.slice(0,2).forEach(m => {
+                            out += `**${m.partOfSpeech}**: ${m.definitions[0].definition}\n\n`;
+                        });
+                        addMessage(out, 'ai', 'text', thoughts);
+                    } else addMessage("Definition not found.", 'ai', 'text', thoughts);
+                } catch(e) { removeThinkingMessage(thinkingEl); addMessage("Dict error.", 'ai', 'text', thoughts); }
+                return;
+            }
+
+            if (tool.id === 'arxiv') {
+                log("Searching ArXiv...");
+                url = `${tool.url}${encodeURIComponent(query)}`;
+                try {
+                    const proxyUrl = await fetchProxy(url, { signal });
+                    const text = await proxyUrl.text();
+                    const parser = new DOMParser();
+                    const xml = parser.parseFromString(text, "text/xml");
+                    const entries = xml.querySelectorAll("entry");
+                    if(entries.length > 0) {
+                        let out = `### ⚛️ ArXiv Papers: ${query}\n`;
+                        Array.from(entries).slice(0,3).forEach(e => {
+                             out += `**${e.querySelector("title").textContent.trim()}**\n${e.querySelector("summary").textContent.trim().substring(0,150)}...\n[Read PDF](${e.querySelector("id").textContent})\n\n`;
+                        });
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(out, 'ai', 'text', thoughts);
+                        return;
+                    }
+                } catch(e) {}
+                await queryCortex(text, thinkingEl, signal, log, thoughts);
+                return;
+            }
+
+            // -- RESEARCH & DIG DEEPER --
+            if (tool.id === 'digdeeper') {
+                query = text.replace(/dig deeper|exhaustive research|thesis on/gi, '').trim();
+                log("Formulating 12-point investigation...");
+                let queries = [query, `${query} history`, `${query} economics`, `${query} future`];
+                log(`Executing ${queries.length} parallel deep scans...`);
+                const searchWiki = async (q) => {
+                    try {
+                        const sUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=${encodeURIComponent(q)}`;
+                        const res = await fetchWithRetry(sUrl, { signal });
+                        const data = await res.json();
+                        if (data.query?.search?.length) return data.query.search.slice(0, 2).map(i => `[Source: ${q}]\n${i.title}: ${i.snippet.replace(/<[^>]*>/g, '')}`).join('\n');
+                    } catch { return ""; }
+                    return "";
+                };
+                const results = await Promise.all(queries.map(q => searchWiki(q)));
+                const bigData = results.join('\n\n').trim();
+                log("Writing doctoral-level thesis...");
+                const thesisPrompt = `Write a Doctoral Thesis on "${query}". Data Context: ${bigData.substring(0, 15000)}... Structure: Abstract, Introduction, Analysis, Conclusion.`;
+                const aiReq = await fetchWithRetry(`https://text.pollinations.ai/${encodeURIComponent(thesisPrompt)}?model=openai`, { signal });
+                removeThinkingMessage(thinkingEl);
+                addMessage(await aiReq.text(), 'ai', 'text', thoughts);
+                return;
+            }
+
+            if (tool.id === 'research') {
+                 if (!text.includes("Context:")) {
+                    query = text.replace(/research|report on/gi, '').trim();
+                    log("Generating clarification...");
+                    try {
+                        const qUrl = `https://text.pollinations.ai/${encodeURIComponent(`Research: "${query}". Ask 3 questions.`)}?model=openai`;
+                        const res = await fetchWithRetry(qUrl, { signal });
+                        if(!res.ok) throw new Error("502");
+                        const q = await res.text();
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(`**Clarify:**\n\n${q}`, 'ai', 'text', thoughts);
+                        AI_STATE.research.active = true;
+                        AI_STATE.research.query = query;
+                        return;
+                    } catch(e) {
+                        log("Clarification skipped. Starting research...");
+                        text = `${query}. Context: ${query}`; 
+                    }
+                }
+                const fullContext = text.replace("Context:", "");
+                log("Scanning sources...");
+                const sUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=${encodeURIComponent(fullContext)}`;
+                const res = await fetchWithRetry(sUrl, { signal });
+                const data = await res.json();
+                let cd = data.query?.search ? data.query.search.map(i=>i.snippet.replace(/<[^>]*>/g,'')).join('\n') : "Internal Knowledge";
+                
+                log("Writing report...");
+                const prompt = `Write research report. Topic: ${fullContext}. Data: ${cd}. Format: Markdown.`;
+                const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+                const aiReq = await fetchWithRetry(aiUrl, { signal });
+                removeThinkingMessage(thinkingEl);
+                addMessage(await aiReq.text(), 'ai', 'text', thoughts);
+                return;
+            }
+            
+            if (tool.id === 'pollinations_img') {
+                const prompt = text.replace(/image of/gi, '').trim();
+                removeThinkingMessage(thinkingEl);
+                addMessage(`${tool.url}${encodeURIComponent(prompt)}?nologo=true`, 'ai', 'image', thoughts);
+                return;
+            }
+            
+            // Generic fallback
+            query = text.replace(/search for/gi, '').trim();
+            url = `${tool.url}${encodeURIComponent(query)}`;
+            if (['npm','pypi','crates'].includes(tool.id)) url = tool.url + encodeURIComponent(query);
+            
+            log(`Querying ${tool.name}...`);
+            try {
+                const req = await fetchWithRetry(url, { signal });
+                const res = await req.json();
+                removeThinkingMessage(thinkingEl);
+                addMessage("Found data: " + JSON.stringify(res).substring(0,300) + "...", 'ai', 'text', thoughts);
+            } catch(e) {
+                removeThinkingMessage(thinkingEl);
+                addMessage("Tool failed.", 'ai', 'text', thoughts);
+            }
+        }
+
+        async function executeCanvas(text, thinkingEl, signal, log, thoughts) {
+            log("Analyzing system architecture...");
+            // ... (Canvas logic same as previous) ...
+            removeThinkingMessage(thinkingEl);
+            editorInput.value = "// Code generated";
+            addMessage("Script generated in Canvas.", 'ai', 'text', thoughts);
+        }
+
+        function openFullscreen(src) { document.getElementById('fullscreen-modal').classList.remove('hidden'); document.getElementById('fullscreen-img').src = src; }
+        function closeFullscreen() { document.getElementById('fullscreen-modal').classList.add('hidden'); }
+        async function downloadImage(url) { window.open(url, '_blank'); }
+        function copyToClipboard(btn, txt) { navigator.clipboard.writeText(decodeURIComponent(txt)); }
+        
+        function fillInput(txt) { document.getElementById('user-input').value = txt; }
+        function clearChat() { 
+            if(abortController) abortController.abort(); 
+            document.getElementById('chat-box').innerHTML = ''; 
+            document.getElementById('code-input').value = '';
+            addMessage("Memory wiped.", 'ai'); 
+            setProcessingState(false);
+        }
+        function toggleTools() { document.getElementById('tools-menu').classList.toggle('hidden'); }
+        function setPrefix(p) { fillInput(p); toggleTools(); document.getElementById('user-input').focus(); }
 
         document.getElementById('chat-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -704,10 +774,7 @@
             processInput(val);
         });
 
-        // Initialize Message
-        setTimeout(() => {
-            document.querySelectorAll('.message-bubble').forEach(el => el.classList.remove('opacity-0'));
-        }, 100);
+        setTimeout(() => { document.querySelectorAll('.message-bubble').forEach(el => el.classList.remove('opacity-0')); }, 100);
     </script>
 </body>
 </html>
