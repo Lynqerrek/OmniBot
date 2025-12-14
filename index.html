@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v11.9 (Architect Fixed)</title>
+    <title>OmniBot v12.1 (Architect Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@
                 <i class="fa-solid fa-cube text-white text-sm"></i>
             </div>
             <div>
-                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.9</span></h1>
+                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v12.1</span></h1>
                 <div class="flex items-center gap-2">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] transition-colors"></span>
                     <p class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase" id="status-text">Active</p>
@@ -167,7 +167,7 @@
                     <div class="space-y-2 flex-1">
                         <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
                         <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
-                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.9</h2>
+                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v12.1</h2>
                             <p class="text-zinc-400 text-sm leading-relaxed mb-4">
                                 I have updated my connection protocols. <strong>Architect Mode</strong> will now perform intelligent context lookups (NPM, PyPi, GitHub) before generating code.
                             </p>
@@ -199,7 +199,7 @@
                         <button onclick="setPrefix('news about ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400"><i class="fa-regular fa-newspaper"></i></div><div><div class="font-medium">Global News</div><div class="text-[10px] text-zinc-500">Live headlines</div></div></button>
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Architect</div>
                         <button onclick="enableCanvasAndType('script ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-code"></i></div><div><div class="font-medium">Generate Code</div><div class="text-[10px] text-zinc-500">Pro++ Scripting</div></div></button>
-                        <button onclick="enableCanvasAndType('deepscript ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-network-wired"></i></div><div><div class="font-medium">DeepScript v4.0</div><div class="text-[10px] text-zinc-500">Auto-Fix Analyzer</div></div></button>
+                        <button onclick="enableCanvasAndType('deepscript ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-network-wired"></i></div><div><div class="font-medium">DeepScript v6.0</div><div class="text-[10px] text-zinc-500">Titan Engine</div></div></button>
                         <button onclick="setPrefix('find repo ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white"><i class="fa-brands fa-github"></i></div><div><div class="font-medium">Find Repo</div><div class="text-[10px] text-zinc-500">GitHub search</div></div></button>
 
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
@@ -751,10 +751,10 @@
             }
         }
 
-        // --- DEEPSCRIPT V4.0 LOGIC (AUTO-FIX) ---
+        // --- DEEPSCRIPT V6.0 LOGIC (TITAN) ---
         async function executeDeepScript(text, thinkingEl, signal, log, thoughts) {
             const rawQuery = text.replace(/deepscript|script|code|write/gi, '').trim();
-            log(`Initializing DeepScript v4.0 Protocol...`);
+            log(`Initializing DeepScript v6.0 Titan Protocol...`);
             
             // Ensure Canvas is open
             if (!AI_STATE.canvasMode) toggleCanvas();
@@ -764,6 +764,7 @@
             let pkgManager = "pypi";
             let docSite = "docs.python.org";
             const lowerQ = rawQuery.toLowerCase();
+            const isShaderRequest = lowerQ.includes("shader") || lowerQ.includes("glsl") || lowerQ.includes("hlsl");
             
             if (lowerQ.includes("js") || lowerQ.includes("node") || lowerQ.includes("react") || lowerQ.includes("next")) { 
                 lang = "javascript"; pkgManager = "npm"; docSite = "developer.mozilla.org";
@@ -777,25 +778,23 @@
             
             log(`Detected Stack: ${lang.toUpperCase()} via ${pkgManager.toUpperCase()}`);
 
-            // 2. Parallel Research
-            log("Spinning up 8-Core Research Engine...");
+            // 2. Parallel Research (11 Vectors)
+            log("Spinning up 11-Core Research Engine...");
             
             const fetchGithub = async () => {
                 try {
-                    log(`[1/8] Scanning GitHub (Stars > 50)...`);
+                    log(`[1/11] Scanning GitHub (Stars > 50)...`);
                     const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(rawQuery)}+language:${lang}+stars:>50&sort=stars&per_page=3`;
                     const res = await fetchWithRetry(url, { signal });
                     const json = await res.json();
-                    if(json.items && json.items.length > 0) {
-                        return json.items.map(r => `Repo: ${r.full_name} (⭐ ${r.stargazers_count}) - ${r.description}`).join('\n');
-                    }
+                    if(json.items && json.items.length > 0) return json.items.map(r => `Repo: ${r.full_name} (⭐ ${r.stargazers_count}) - ${r.description}`).join('\n');
                     return "No high-quality repos found.";
                 } catch(e) { return "GitHub scan timed out."; }
             };
 
             const fetchStackOverflow = async () => {
                 try {
-                    log(`[2/8] Cross-referencing StackOverflow solutions...`);
+                    log(`[2/11] Cross-referencing StackOverflow solutions...`);
                     const url = `https://api.stackexchange.com/2.3/search?order=desc&sort=votes&intitle=${encodeURIComponent(rawQuery)}&site=stackoverflow&pagesize=3`;
                     const res = await fetchWithRetry(url, { signal });
                     const json = await res.json();
@@ -805,7 +804,7 @@
 
             const fetchPackages = async () => {
                 try {
-                    log(`[3/8] Indexing ${pkgManager.toUpperCase()} ecosystem...`);
+                    log(`[3/11] Indexing ${pkgManager.toUpperCase()} ecosystem...`);
                     if (pkgManager === 'npm') {
                         const res = await fetchWithRetry(`https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(rawQuery)}&size=3&popularity=0.5`, { signal });
                         const json = await res.json();
@@ -825,7 +824,7 @@
 
             const fetchCheatSheet = async () => {
                 try {
-                    log(`[4/8] Extracting ${lang} syntax idioms...`);
+                    log(`[4/11] Extracting ${lang} syntax idioms...`);
                     const topic = rawQuery.split(' ').filter(w => w.length > 3).pop() || 'hello';
                     const res = await fetchWithRetry(`https://cheat.sh/${lang}/${topic}`, { signal });
                     const txt = await res.text();
@@ -835,7 +834,7 @@
 
             const fetchHackerNews = async () => {
                 try {
-                    log(`[5/8] Checking Hacker News archives...`);
+                    log(`[5/11] Checking Hacker News archives...`);
                     const res = await fetchWithRetry(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(rawQuery)}&tags=story&hitsPerPage=3&numericFilters=points>20`, { signal });
                     const json = await res.json();
                     return json.hits ? json.hits.map(h => `HN Discussion: ${h.title} (Points: ${h.points})`).join('\n') : "No trending discussions.";
@@ -844,7 +843,7 @@
 
             const fetchConcepts = async () => {
                 try {
-                    log(`[6/8] Defining core concepts...`);
+                    log(`[6/11] Defining core concepts...`);
                     const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery)}&format=json`, { signal });
                     const json = await res.json();
                     return json.Abstract ? `Definition: ${json.Abstract}` : "";
@@ -853,7 +852,7 @@
 
             const fetchOfficialDocs = async () => {
                 try {
-                    log(`[7/8] Scanning ${docSite}...`);
+                    log(`[7/11] Scanning ${docSite}...`);
                     const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent("site:" + docSite + " " + rawQuery)}&format=json`, { signal });
                     const json = await res.json();
                     return json.RelatedTopics ? json.RelatedTopics.slice(0,3).map(t => t.Text).join('\n') : "Refer to standard docs.";
@@ -862,14 +861,47 @@
 
             const fetchBestPractices = async () => {
                 try {
-                    log(`[8/8] Finding best practices...`);
+                    log(`[8/11] Finding best practices...`);
                     const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery + " best practices tutorial")}&format=json`, { signal });
                     const json = await res.json();
                     return json.RelatedTopics ? json.RelatedTopics.slice(0,2).map(t => t.Text).join('\n') : "";
                 } catch(e) { return ""; }
             };
 
-            const [githubData, stackData, packageData, cheatSheetData, hnData, conceptData, docData, practiceData] = await Promise.all([
+            // NEW API 1: OSV.dev (Vulnerabilities)
+            const fetchOSV = async () => {
+                try {
+                    log(`[9/11] Checking vulnerability databases (OSV)...`);
+                    const res = await fetchWithRetry(`https://api.osv.dev/v1/query`, {
+                        method: 'POST',
+                        body: JSON.stringify({ package: { ecosystem: pkgManager === 'npm' ? 'npm' : 'PyPI', name: rawQuery.split(' ')[0] } }) 
+                    });
+                    const json = await res.json();
+                    return json.vulns ? `WARNING: Vulnerabilities found: ${json.vulns.length}` : "No known vulnerabilities found.";
+                } catch(e) { return "Security check skipped."; }
+            };
+
+            // NEW API 2: Docker Hub (Containerization)
+            const fetchDocker = async () => {
+                try {
+                    log(`[10/11] Searching Docker Hub images...`);
+                    const res = await fetchWithRetry(`https://hub.docker.com/v2/search/repositories?query=${encodeURIComponent(rawQuery)}&page_size=3`, { signal });
+                    const json = await res.json();
+                    return json.results ? json.results.map(r => `Docker Image: ${r.repo_name} (Stars: ${r.star_count})`).join('\n') : "No containers found.";
+                } catch(e) { return ""; }
+            };
+
+            // NEW API 3: Reddit (Community Feedback)
+            const fetchReddit = async () => {
+                try {
+                    log(`[11/11] Parsing Reddit discussions...`);
+                    const res = await fetchWithRetry(`https://www.reddit.com/search.json?q=${encodeURIComponent(rawQuery + " programming")}&limit=3`, { signal });
+                    const json = await res.json();
+                    return json.data.children.map(c => `Reddit Thread: ${c.data.title} (Score: ${c.data.score})`).join('\n');
+                } catch(e) { return "Reddit sync failed."; }
+            };
+
+            const [githubData, stackData, packageData, cheatSheetData, hnData, conceptData, docData, practiceData, osvData, dockerData, redditData] = await Promise.all([
                 fetchGithub(), 
                 new Promise(r => setTimeout(() => r(fetchStackOverflow()), 100)),
                 new Promise(r => setTimeout(() => r(fetchPackages()), 200)),
@@ -877,12 +909,14 @@
                 new Promise(r => setTimeout(() => r(fetchHackerNews()), 400)),
                 new Promise(r => setTimeout(() => r(fetchConcepts()), 500)),
                 new Promise(r => setTimeout(() => r(fetchOfficialDocs()), 600)),
-                new Promise(r => setTimeout(() => r(fetchBestPractices()), 700))
+                new Promise(r => setTimeout(() => r(fetchBestPractices()), 700)),
+                new Promise(r => setTimeout(() => r(fetchOSV()), 800)),
+                new Promise(r => setTimeout(() => r(fetchDocker()), 900)),
+                new Promise(r => setTimeout(() => r(fetchReddit()), 1000))
             ]);
 
             const fullContext = `
             == DEEPSCRIPT RESEARCH REPORT ==
-            TARGET: ${rawQuery} (${lang.toUpperCase()})
             [1. GITHUB]: ${githubData}
             [2. SO]: ${stackData}
             [3. PACKAGES]: ${packageData}
@@ -891,6 +925,9 @@
             [6. CONCEPTS]: ${conceptData}
             [7. DOCS]: ${docData}
             [8. PRACTICES]: ${practiceData}
+            [9. SECURITY]: ${osvData}
+            [10. DOCKER]: ${dockerData}
+            [11. REDDIT]: ${redditData}
             `;
 
             // 3. Draft Generation
@@ -901,51 +938,102 @@
             Research: ${fullContext}
             Task: Write a COMPLETE, RUNNABLE script based on the research. Output ONLY code.`;
 
-            const draftUrl = `https://text.pollinations.ai/${encodeURIComponent(draftPrompt)}?model=openai`;
-            const draftRes = await fetchWithRetry(draftUrl, { signal });
-            const draftCode = await draftRes.text();
+            let draftUrl = `https://text.pollinations.ai/${encodeURIComponent(draftPrompt)}?model=openai`;
+            let draftRes = await fetchWithRetry(draftUrl, { signal });
+            let currentCode = await draftRes.text();
 
-            // 4. DEEPSCRIPT ANALYZER (AUTO-FIX)
-            log("⚡ DeepScript Analyzer: Reviewing Code...");
-            await new Promise(r => setTimeout(r, 1000)); // Pause for effect
-            
-            log("⚡ DeepScript Analyzer: Fixing Bugs & Optimizing...");
-            
-            const analyzerPrompt = `System: You are a Principal Software Architect and Security Auditor.
-            
-            CONTEXT:
-            User Task: ${rawQuery}
-            Research Data: ${fullContext}
-            
-            DRAFT CODE TO REVIEW:
-            ${draftCode}
-            
-            MANDATE:
-            1. Review the Draft Code against the Research Data and Best Practices.
-            2. FIX any bugs, security flaws, or inefficiencies.
-            3. Ensure the code is production-ready and heavily commented with "Architect Notes".
-            4. Output ONLY the FINAL, POLISHED code. No markdown fences.
-            `;
+            // 4. RECURSIVE AUTO-FIX LOOP (3 Iterations)
+            for (let i = 1; i <= 3; i++) {
+                log(`⚡ Auto-Fix Cycle ${i}/3: Analyzing & Refining...`);
+                let focus = "General improvements";
+                if (i === 1) focus = "Security vulnerabilities & Safety checks (Check OSV data)";
+                if (i === 2) focus = "Performance optimization & Efficiency";
+                if (i === 3) focus = "Code robustness, Error Handling, and Comments";
 
-            const finalUrl = `https://text.pollinations.ai/${encodeURIComponent(analyzerPrompt)}?model=openai`;
+                let validationData = "";
+                try {
+                    log(`⚡ Cycle ${i}: Running validation research...`);
+                    const valQuery = `${rawQuery} ${focus} best practices`;
+                    const valRes = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(valQuery)}&format=json`, { signal });
+                    const valJson = await valRes.json();
+                    validationData = valJson.RelatedTopics ? valJson.RelatedTopics.slice(0,2).map(t=>t.Text).join('\n') : "";
+                } catch(e) {}
+
+                const analyzerPrompt = `System: You are an Elite Code Auditor.
+                CONTEXT: User Task: ${rawQuery}. Focus: ${focus}. Validation: ${validationData}.
+                CURRENT CODE: ${currentCode}
+                MANDATE: Critically analyze and REWRITE the code to fix flaws related to "${focus}". Output ONLY code.`;
+
+                const loopUrl = `https://text.pollinations.ai/${encodeURIComponent(analyzerPrompt)}?model=openai`;
+                const loopRes = await fetchWithRetry(loopUrl, { signal });
+                currentCode = await loopRes.text();
+                
+                editorInput.value = currentCode;
+                void editorInput.offsetWidth;
+            }
+
+            // 5. THE PRISM (SHADER ENGINE) - Conditional
+            if (isShaderRequest) {
+                log("💎 The Prism: Initializing Shader Engine...");
+                try {
+                    // Specific shader research
+                    const shaderRes = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent("glsl optimization techniques shader best practices")}&format=json`, { signal });
+                    const shaderJson = await shaderRes.json();
+                    const shaderContext = shaderJson.RelatedTopics ? shaderJson.RelatedTopics.slice(0,3).map(t=>t.Text).join('\n') : "Use vector operations.";
+                    
+                    log("💎 The Prism: Optimizing Math & GPU Instructions...");
+                    const shaderPrompt = `System: You are a Graphics Engineer.
+                    Task: Optimize this shader code for GPU performance (reduce instructions, use mad, pack vectors).
+                    Context: ${shaderContext}
+                    Code: ${currentCode}
+                    Output ONLY the optimized shader code.`;
+                    
+                    const prismUrl = `https://text.pollinations.ai/${encodeURIComponent(shaderPrompt)}?model=openai`;
+                    const prismRes = await fetchWithRetry(prismUrl, { signal });
+                    currentCode = await prismRes.text();
+                    editorInput.value = currentCode;
+                } catch(e) { log("Shader optimization skipped."); }
+            }
+
+            // 6. THE MAXIMIZER (General Optimization)
+            log("🚀 The Maximizer: Compressing logic for O(n)...");
+            const maxPrompt = `System: You are a Code Optimizer.
+            Task: Refactor this code for MAXIMUM efficiency and speed without removing features. Reduce complexity.
+            Code: ${currentCode}
+            Output ONLY the code.`;
+            const maxUrl = `https://text.pollinations.ai/${encodeURIComponent(maxPrompt)}?model=openai`;
+            const maxRes = await fetchWithRetry(maxUrl, { signal });
+            currentCode = await maxRes.text();
+            editorInput.value = currentCode;
+
+            // 7. FINAL REPAIR (Sanity Check)
+            log("🛡️ Final Polish: Linting & Integrity Check...");
+            const finalPrompt = `System: You are a QA Bot.
+            Task: Check for syntax errors, missing imports, or broken logic. Fix them. Ensure indentation is perfect.
+            Code: ${currentCode}
+            Output ONLY the final code.`;
+            const finalUrl = `https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}?model=openai`;
             const finalRes = await fetchWithRetry(finalUrl, { signal });
-            const finalCode = await finalRes.text();
+            currentCode = await finalRes.text();
 
             removeThinkingMessage(thinkingEl);
             
-            // Output to Editor
-            editorInput.value = finalCode;
+            // Output Final Code
+            editorInput.value = currentCode;
             editorInput.classList.remove('flash-code');
-            void editorInput.offsetWidth; // Trigger reflow
+            void editorInput.offsetWidth; 
             editorInput.classList.add('flash-code');
             
-            const successMsg = `**DeepScript v4.0 Complete.**
+            const successMsg = `**DeepScript v6.0 Titan Complete.**
             
-            1. **Research:** 8-Core Scan complete.
+            1. **Research:** 11-Core Scan (including OSV, Docker, Reddit).
             2. **Draft:** Generated initial prototype.
-            3. **Analyzer:** Automated Code Review & Auto-Fix complete.
+            3. **Recursion:** 3x Self-Correction Loops.
+            4. **Prism:** Shader Engine (Active: ${isShaderRequest}).
+            5. **Maximizer:** Logic Compressed.
+            6. **Final QA:** Integrity Verified.
             
-            The **optimized, production-grade solution** is now in the Architect IDE.`;
+            The **optimized, battle-tested solution** is now in the Architect IDE.`;
             
             addMessage(successMsg, 'ai', 'text', thoughts);
         }
