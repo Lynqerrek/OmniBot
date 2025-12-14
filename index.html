@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v11.7 (Architect Fixed)</title>
+    <title>OmniBot v11.9 (Architect Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@
                 <i class="fa-solid fa-cube text-white text-sm"></i>
             </div>
             <div>
-                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.7</span></h1>
+                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.9</span></h1>
                 <div class="flex items-center gap-2">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] transition-colors"></span>
                     <p class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase" id="status-text">Active</p>
@@ -167,7 +167,7 @@
                     <div class="space-y-2 flex-1">
                         <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
                         <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
-                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.7</h2>
+                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.9</h2>
                             <p class="text-zinc-400 text-sm leading-relaxed mb-4">
                                 I have updated my connection protocols. <strong>Architect Mode</strong> will now perform intelligent context lookups (NPM, PyPi, GitHub) before generating code.
                             </p>
@@ -199,6 +199,7 @@
                         <button onclick="setPrefix('news about ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400"><i class="fa-regular fa-newspaper"></i></div><div><div class="font-medium">Global News</div><div class="text-[10px] text-zinc-500">Live headlines</div></div></button>
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Architect</div>
                         <button onclick="enableCanvasAndType('script ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-code"></i></div><div><div class="font-medium">Generate Code</div><div class="text-[10px] text-zinc-500">Pro++ Scripting</div></div></button>
+                        <button onclick="enableCanvasAndType('deepscript ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-network-wired"></i></div><div><div class="font-medium">DeepScript v4.0</div><div class="text-[10px] text-zinc-500">Auto-Fix Analyzer</div></div></button>
                         <button onclick="setPrefix('find repo ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white"><i class="fa-brands fa-github"></i></div><div><div class="font-medium">Find Repo</div><div class="text-[10px] text-zinc-500">GitHub search</div></div></button>
 
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
@@ -281,7 +282,8 @@
             { id: 'dictionary', name: 'DICT', keywords: ['define'], url: 'https://api.dictionaryapi.dev/api/v2/entries/en/' },
             { id: 'urbandictionary', name: 'URBAN', keywords: ['slang'], url: 'https://api.urbandictionary.com/v0/define?term=' },
             { id: 'rizz', name: 'RIZZ-MASTER', keywords: ['rizz', 'pickup line', 'flirt', 'date idea', 'romance tip'], url: 'https://text.pollinations.ai/' },
-            { id: 'mood', name: 'MOOD-SCAN', keywords: ['mood', 'analyze mood', 'emotion', 'vibe check'], url: 'https://text.pollinations.ai/' }
+            { id: 'mood', name: 'MOOD-SCAN', keywords: ['mood', 'analyze mood', 'emotion', 'vibe check'], url: 'https://text.pollinations.ai/' },
+            { id: 'deepscript', name: 'DEEPSCRIPT', keywords: ['deepscript', 'deep script', 'full stack research', 'code research'], url: 'https://text.pollinations.ai/' }
         ];
 
         const chatBox = document.getElementById('chat-box');
@@ -575,6 +577,15 @@
                 return;
             }
 
+            // Check for DeepScript trigger
+            const deepScriptTool = TOOL_REGISTRY.find(t => t.id === 'deepscript');
+            if (findTool(text) === deepScriptTool) {
+                try { await executeDeepScript(text, thinkingEl, signal, log, thoughts); }
+                catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("DeepScript Protocol Failed.", 'ai', 'text', thoughts); } }
+                finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
+                return;
+            }
+
             if (AI_STATE.research.active) {
                 const query = AI_STATE.research.query;
                 const context = text;
@@ -740,31 +751,284 @@
             }
         }
 
+        // --- DEEPSCRIPT V4.0 LOGIC (AUTO-FIX) ---
+        async function executeDeepScript(text, thinkingEl, signal, log, thoughts) {
+            const rawQuery = text.replace(/deepscript|script|code|write/gi, '').trim();
+            log(`Initializing DeepScript v4.0 Protocol...`);
+            
+            // Ensure Canvas is open
+            if (!AI_STATE.canvasMode) toggleCanvas();
+
+            // 1. Advanced Language Detection
+            let lang = "python"; 
+            let pkgManager = "pypi";
+            let docSite = "docs.python.org";
+            const lowerQ = rawQuery.toLowerCase();
+            
+            if (lowerQ.includes("js") || lowerQ.includes("node") || lowerQ.includes("react") || lowerQ.includes("next")) { 
+                lang = "javascript"; pkgManager = "npm"; docSite = "developer.mozilla.org";
+            }
+            else if (lowerQ.includes("rust")) { lang = "rust"; pkgManager = "cargo"; docSite = "docs.rs"; }
+            else if (lowerQ.includes("go") || lowerQ.includes("golang")) { lang = "go"; pkgManager = "go"; docSite = "pkg.go.dev"; }
+            else if (lowerQ.includes("php")) { lang = "php"; pkgManager = "composer"; docSite = "php.net"; }
+            else if (lowerQ.includes("java")) { lang = "java"; pkgManager = "maven"; docSite = "docs.oracle.com"; }
+            else if (lowerQ.includes("c#") || lowerQ.includes("csharp")) { lang = "c#"; pkgManager = "nuget"; docSite = "learn.microsoft.com"; }
+            else if (lowerQ.includes("cpp") || lowerQ.includes("c++")) { lang = "cpp"; pkgManager = "cmake"; docSite = "cppreference.com"; }
+            
+            log(`Detected Stack: ${lang.toUpperCase()} via ${pkgManager.toUpperCase()}`);
+
+            // 2. Parallel Research
+            log("Spinning up 8-Core Research Engine...");
+            
+            const fetchGithub = async () => {
+                try {
+                    log(`[1/8] Scanning GitHub (Stars > 50)...`);
+                    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(rawQuery)}+language:${lang}+stars:>50&sort=stars&per_page=3`;
+                    const res = await fetchWithRetry(url, { signal });
+                    const json = await res.json();
+                    if(json.items && json.items.length > 0) {
+                        return json.items.map(r => `Repo: ${r.full_name} (⭐ ${r.stargazers_count}) - ${r.description}`).join('\n');
+                    }
+                    return "No high-quality repos found.";
+                } catch(e) { return "GitHub scan timed out."; }
+            };
+
+            const fetchStackOverflow = async () => {
+                try {
+                    log(`[2/8] Cross-referencing StackOverflow solutions...`);
+                    const url = `https://api.stackexchange.com/2.3/search?order=desc&sort=votes&intitle=${encodeURIComponent(rawQuery)}&site=stackoverflow&pagesize=3`;
+                    const res = await fetchWithRetry(url, { signal });
+                    const json = await res.json();
+                    return json.items && json.items.length > 0 ? json.items.map(i => `Solution: ${i.title} (Votes: ${i.score}) - ${i.link}`).join('\n') : "No direct solutions found.";
+                } catch(e) { return "StackOverflow index unreachable."; }
+            };
+
+            const fetchPackages = async () => {
+                try {
+                    log(`[3/8] Indexing ${pkgManager.toUpperCase()} ecosystem...`);
+                    if (pkgManager === 'npm') {
+                        const res = await fetchWithRetry(`https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(rawQuery)}&size=3&popularity=0.5`, { signal });
+                        const json = await res.json();
+                        return json.objects ? json.objects.map(p => `Lib: ${p.package.name} (v${p.package.version}) - ${p.package.description}`).join('\n') : "";
+                    } else if (pkgManager === 'pypi') {
+                        const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery + " python pypi best library")}&format=json`, { signal });
+                        const json = await res.json();
+                        return json.RelatedTopics ? json.RelatedTopics.slice(0,3).map(t => t.Text).join('\n') : "Standard Libraries";
+                    } else if (pkgManager === 'cargo') {
+                        const res = await fetchWithRetry(`https://crates.io/api/v1/crates?q=${encodeURIComponent(rawQuery)}&per_page=3&sort=downloads`, { signal });
+                        const json = await res.json();
+                        return json.crates ? json.crates.map(c => `Crate: ${c.name} (DLs: ${c.downloads})`).join('\n') : "";
+                    }
+                } catch(e) { return "Package registry silent."; }
+                return "Standard libraries recommended.";
+            };
+
+            const fetchCheatSheet = async () => {
+                try {
+                    log(`[4/8] Extracting ${lang} syntax idioms...`);
+                    const topic = rawQuery.split(' ').filter(w => w.length > 3).pop() || 'hello';
+                    const res = await fetchWithRetry(`https://cheat.sh/${lang}/${topic}`, { signal });
+                    const txt = await res.text();
+                    return txt.length < 1000 ? txt : txt.substring(0, 1000) + "...(truncated)"; 
+                } catch(e) { return ""; }
+            };
+
+            const fetchHackerNews = async () => {
+                try {
+                    log(`[5/8] Checking Hacker News archives...`);
+                    const res = await fetchWithRetry(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(rawQuery)}&tags=story&hitsPerPage=3&numericFilters=points>20`, { signal });
+                    const json = await res.json();
+                    return json.hits ? json.hits.map(h => `HN Discussion: ${h.title} (Points: ${h.points})`).join('\n') : "No trending discussions.";
+                } catch(e) { return ""; }
+            };
+
+            const fetchConcepts = async () => {
+                try {
+                    log(`[6/8] Defining core concepts...`);
+                    const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery)}&format=json`, { signal });
+                    const json = await res.json();
+                    return json.Abstract ? `Definition: ${json.Abstract}` : "";
+                } catch(e) { return ""; }
+            };
+
+            const fetchOfficialDocs = async () => {
+                try {
+                    log(`[7/8] Scanning ${docSite}...`);
+                    const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent("site:" + docSite + " " + rawQuery)}&format=json`, { signal });
+                    const json = await res.json();
+                    return json.RelatedTopics ? json.RelatedTopics.slice(0,3).map(t => t.Text).join('\n') : "Refer to standard docs.";
+                } catch(e) { return ""; }
+            };
+
+            const fetchBestPractices = async () => {
+                try {
+                    log(`[8/8] Finding best practices...`);
+                    const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery + " best practices tutorial")}&format=json`, { signal });
+                    const json = await res.json();
+                    return json.RelatedTopics ? json.RelatedTopics.slice(0,2).map(t => t.Text).join('\n') : "";
+                } catch(e) { return ""; }
+            };
+
+            const [githubData, stackData, packageData, cheatSheetData, hnData, conceptData, docData, practiceData] = await Promise.all([
+                fetchGithub(), 
+                new Promise(r => setTimeout(() => r(fetchStackOverflow()), 100)),
+                new Promise(r => setTimeout(() => r(fetchPackages()), 200)),
+                new Promise(r => setTimeout(() => r(fetchCheatSheet()), 300)),
+                new Promise(r => setTimeout(() => r(fetchHackerNews()), 400)),
+                new Promise(r => setTimeout(() => r(fetchConcepts()), 500)),
+                new Promise(r => setTimeout(() => r(fetchOfficialDocs()), 600)),
+                new Promise(r => setTimeout(() => r(fetchBestPractices()), 700))
+            ]);
+
+            const fullContext = `
+            == DEEPSCRIPT RESEARCH REPORT ==
+            TARGET: ${rawQuery} (${lang.toUpperCase()})
+            [1. GITHUB]: ${githubData}
+            [2. SO]: ${stackData}
+            [3. PACKAGES]: ${packageData}
+            [4. SYNTAX]: ${cheatSheetData}
+            [5. HN]: ${hnData}
+            [6. CONCEPTS]: ${conceptData}
+            [7. DOCS]: ${docData}
+            [8. PRACTICES]: ${practiceData}
+            `;
+
+            // 3. Draft Generation
+            log("Architecting Draft Solution...");
+            
+            const draftPrompt = `System: You are a Senior Developer.
+            User Task: ${rawQuery}
+            Research: ${fullContext}
+            Task: Write a COMPLETE, RUNNABLE script based on the research. Output ONLY code.`;
+
+            const draftUrl = `https://text.pollinations.ai/${encodeURIComponent(draftPrompt)}?model=openai`;
+            const draftRes = await fetchWithRetry(draftUrl, { signal });
+            const draftCode = await draftRes.text();
+
+            // 4. DEEPSCRIPT ANALYZER (AUTO-FIX)
+            log("⚡ DeepScript Analyzer: Reviewing Code...");
+            await new Promise(r => setTimeout(r, 1000)); // Pause for effect
+            
+            log("⚡ DeepScript Analyzer: Fixing Bugs & Optimizing...");
+            
+            const analyzerPrompt = `System: You are a Principal Software Architect and Security Auditor.
+            
+            CONTEXT:
+            User Task: ${rawQuery}
+            Research Data: ${fullContext}
+            
+            DRAFT CODE TO REVIEW:
+            ${draftCode}
+            
+            MANDATE:
+            1. Review the Draft Code against the Research Data and Best Practices.
+            2. FIX any bugs, security flaws, or inefficiencies.
+            3. Ensure the code is production-ready and heavily commented with "Architect Notes".
+            4. Output ONLY the FINAL, POLISHED code. No markdown fences.
+            `;
+
+            const finalUrl = `https://text.pollinations.ai/${encodeURIComponent(analyzerPrompt)}?model=openai`;
+            const finalRes = await fetchWithRetry(finalUrl, { signal });
+            const finalCode = await finalRes.text();
+
+            removeThinkingMessage(thinkingEl);
+            
+            // Output to Editor
+            editorInput.value = finalCode;
+            editorInput.classList.remove('flash-code');
+            void editorInput.offsetWidth; // Trigger reflow
+            editorInput.classList.add('flash-code');
+            
+            const successMsg = `**DeepScript v4.0 Complete.**
+            
+            1. **Research:** 8-Core Scan complete.
+            2. **Draft:** Generated initial prototype.
+            3. **Analyzer:** Automated Code Review & Auto-Fix complete.
+            
+            The **optimized, production-grade solution** is now in the Architect IDE.`;
+            
+            addMessage(successMsg, 'ai', 'text', thoughts);
+        }
+
         // --- TOOL EXECUTION ---
         async function executeTool(tool, text, thinkingEl, signal, log, thoughts) {
             let url = tool.url;
             let query = text.split(' ').pop(); 
 
-            // -- NEWS --
+            // -- NEWS (UPGRADED v11.7) --
             if (tool.id === 'googlenews') {
-                query = text.replace(/news|headlines|about|in|happening|what/gi, '').trim();
-                if (!query || query.length < 2) query = "World";
-                log(`Scanning global news for "${query}"...`);
-                url = `${tool.url}${encodeURIComponent(query)}%20sourcelang:english`;
-
+                // 1. Refined Query Extraction
+                query = text.replace(/news about|news on|headlines for|latest in|show me news|news|headlines/gi, '').trim();
+                if (!query || query.length < 2) query = "World Technology";
+                
+                log(`📡 Tuning frequency to: "${query}"...`);
+                
+                // 2. Fetch Google News RSS via Proxy (Keyless, Free, Accurate)
+                const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
+                
                 try {
-                    const req = await fetchWithRetry(url, { signal });
-                    const res = await req.json();
-                    if (res.articles?.length) {
-                        let out = `### 🌍 Global News: ${query}\n`;
-                        res.articles.slice(0, 5).forEach(a => {
-                            out += `**[${a.title}](${a.url})**\n*${a.sourcecountry || 'Global'} - ${a.seendate?.substring(0,8) || 'Recent'}*\n\n`;
+                    // We need a proxy for RSS XML to avoid CORS
+                    const res = await fetchProxy(rssUrl);
+                    if (!res.ok) throw new Error("Signal Lost");
+                    
+                    const xmlText = await res.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+                    const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 5); // Top 5 stories
+
+                    if (items.length > 0) {
+                        log("Analyzing headlines for briefing...");
+                        
+                        // Extract details for AI processing
+                        const newsData = items.map(item => {
+                            const title = item.querySelector("title")?.textContent || "Unknown";
+                            const link = item.querySelector("link")?.textContent || "#";
+                            const pubDate = item.querySelector("pubDate")?.textContent || "";
+                            // Clean up date
+                            const dateObj = new Date(pubDate);
+                            const timeStr = isNaN(dateObj) ? "Recent" : dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            return { title, link, time: timeStr };
                         });
+
+                        // 3. Generate AI Executive Briefing
+                        const headlinesText = newsData.map(n => `- ${n.title}`).join('\n');
+                        const prompt = `You are a professional news anchor. 
+                        Topic: "${query}"
+                        Headlines:
+                        ${headlinesText}
+                        
+                        Task: Write a short, punchy, 3-sentence "Executive Briefing" summarizing the current situation based ONLY on these headlines. 
+                        Tone: Professional, neutral, informative.`;
+                        
+                        let briefing = "Here are the latest updates.";
+                        try {
+                            const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
+                            const aiRes = await fetchWithRetry(aiUrl, { signal });
+                            briefing = await aiRes.text();
+                        } catch(e) {
+                            briefing = "Live feed established below.";
+                        }
+
+                        // 4. Construct Output
+                        let out = `### 📰 Live Briefing: ${query.charAt(0).toUpperCase() + query.slice(1)}\n\n`;
+                        out += `> ${briefing.replace(/\n/g, ' ')}\n\n`; // Blockquote for briefing
+                        out += `---\n`;
+                        
+                        newsData.forEach(n => {
+                            // Clean title (Google News often adds "- Source" at the end)
+                            const cleanTitle = n.title.split(' - ')[0];
+                            const source = n.title.split(' - ').pop() || 'News';
+                            out += `**[${cleanTitle}](${n.link})**\n`;
+                            out += `<span class="text-xs text-zinc-500"><i class="fa-regular fa-clock"></i> ${n.time} • <i class="fa-solid fa-newspaper"></i> ${source}</span>\n\n`;
+                        });
+
                         removeThinkingMessage(thinkingEl);
                         addMessage(out, 'ai', 'text', thoughts);
-                    } else throw new Error("No items");
+                    } else {
+                        throw new Error("No signal");
+                    }
                 } catch(e) {
-                    log("GDELT silent. Querying Wiki Events...");
+                    log("Satellite link unstable. Attempting web search backup...");
                     await executeTool(TOOL_REGISTRY.find(t=>t.id==='websearch'), `${query} news`, thinkingEl, signal, log, thoughts); 
                 }
                 return;
@@ -977,6 +1241,34 @@
                 const prompt = text.replace(/image of/gi, '').trim();
                 removeThinkingMessage(thinkingEl);
                 addMessage(`${tool.url}${encodeURIComponent(prompt)}?nologo=true`, 'ai', 'image', thoughts);
+                return;
+            }
+            
+            // -- WEB SEARCH (Fixed Handler) --
+            if (tool.id === 'websearch') {
+                query = text.replace(/search for|search|find|lookup|about/gi, '').trim();
+                url = `${tool.url}${encodeURIComponent(query)}`;
+                log(`Consulting Knowledge Base for "${query}"...`);
+                
+                try {
+                    const req = await fetchWithRetry(url, { signal });
+                    const res = await req.json();
+                    
+                    if(res.query?.search?.length) {
+                        let out = `### 🔍 Knowledge Base: ${query}\n`;
+                        res.query.search.slice(0, 4).forEach(i => {
+                            const cleanSnippet = i.snippet.replace(/<span class="searchmatch">/g, '**').replace(/<\/span>/g, '**').replace(/<[^>]*>/g, '');
+                            out += `**[${i.title}](https://en.wikipedia.org/wiki/${encodeURIComponent(i.title)})**\n${cleanSnippet}...\n\n`;
+                        });
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(out, 'ai', 'text', thoughts);
+                    } else {
+                        throw new Error("No results");
+                    }
+                } catch(e) {
+                    removeThinkingMessage(thinkingEl);
+                    addMessage("Search yielded no tangible results.", 'ai', 'text', thoughts);
+                }
                 return;
             }
             
