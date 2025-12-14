@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v11.5 (Fixed)</title>
+    <title>OmniBot v11.6 (Architect Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -104,7 +104,15 @@
             white-space: pre;
             overflow-x: auto; 
             padding: 1rem;
+            transition: background 0.2s ease;
         }
+
+        @keyframes flashSuccess {
+            0% { background: rgba(16, 185, 129, 0.2); }
+            100% { background: transparent; }
+        }
+        
+        .flash-code { animation: flashSuccess 0.5s ease-out; }
 
         .editor-header { background: #252526; border-bottom: 1px solid #333; }
         
@@ -132,7 +140,7 @@
                 <i class="fa-solid fa-cube text-white text-sm"></i>
             </div>
             <div>
-                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.5</span></h1>
+                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.6</span></h1>
                 <div class="flex items-center gap-2">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] transition-colors"></span>
                     <p class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase" id="status-text">Active</p>
@@ -159,9 +167,9 @@
                     <div class="space-y-2 flex-1">
                         <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
                         <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
-                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.5</h2>
+                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.6</h2>
                             <p class="text-zinc-400 text-sm leading-relaxed mb-4">
-                                I have updated my connection protocols to be more resilient. I am ready to assist with <strong>Research</strong>, <strong>Coding</strong>, and <strong>Analysis</strong>.
+                                I have updated my connection protocols. <strong>Architect Mode</strong> will now perform intelligent context lookups (NPM, PyPi, GitHub) before generating code.
                             </p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <button onclick="fillInput('News about Poland')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
@@ -761,13 +769,60 @@
 
         async function executeCanvas(text, thinkingEl, signal, log, thoughts) {
             log("Analyzing requirements...");
-            const prompt = `Generate code for: ${text}. output only the code.`;
+
+            // 1. Context Gathering (Restored)
+            let contextData = "";
+            const lower = text.toLowerCase();
+            let toolToUse = null;
+            
+            // Heuristics for tool selection
+            if (lower.includes('npm') || lower.includes('node') || lower.includes('react') || lower.includes('vue')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='npm');
+            else if (lower.includes('python') || lower.includes('pip')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='pypi');
+            else if (lower.includes('rust') || lower.includes('cargo')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='crates');
+            else if (lower.includes('github') || lower.includes('repo')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='ghrepo');
+            else if (lower.includes('bash') || lower.includes('terminal')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='cheatsh');
+
+            if (toolToUse) {
+                log(`Consulting ${toolToUse.name} for latest data...`);
+                try {
+                    const query = text.replace(/script|code|write|generate|a|an|for/gi, '').trim();
+                    let searchUrl = toolToUse.url + encodeURIComponent(query);
+                    // Special cases
+                    if(toolToUse.id === 'ghrepo') searchUrl = `${toolToUse.url}${encodeURIComponent(query)}`;
+                    
+                    const res = await fetchWithRetry(searchUrl, { signal });
+                    
+                    // Handle text vs json APIs
+                    let dataStr = "";
+                    if (toolToUse.id === 'cheatsh') {
+                        dataStr = await res.text();
+                    } else {
+                        const json = await res.json();
+                        dataStr = JSON.stringify(json).substring(0, 1000);
+                    }
+                    
+                    contextData = `Reference Data (${toolToUse.name}): ${dataStr}`;
+                    log("Context acquired.");
+                } catch (e) {
+                    log("Context search skipped (Connection).");
+                }
+            }
+
+            // 2. Generation
+            log("Architecting solution...");
+            const prompt = `System: You are an expert coder. ${contextData}\nUser Task: ${text}\nInstruction: Write the complete, working code for this task. Output ONLY the code. No markdown.`;
+            
             const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
             const res = await fetchWithRetry(url, { signal });
             const code = await res.text();
+            
             removeThinkingMessage(thinkingEl);
             editorInput.value = code;
-            addMessage("I have drafted the code in the Architect IDE.", 'ai', 'text', thoughts);
+            editorInput.classList.remove('flash-code');
+            void editorInput.offsetWidth; // Trigger reflow
+            editorInput.classList.add('flash-code');
+            
+            addMessage("I have drafted the code in the Architect IDE based on the analysis.", 'ai', 'text', thoughts);
         }
 
         function openFullscreen(src) { document.getElementById('fullscreen-modal').classList.remove('hidden'); document.getElementById('fullscreen-img').src = src; }
