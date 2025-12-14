@@ -3,464 +3,711 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot AI v17.0 "Flow"</title>
-    <!-- Tailwind CSS -->
+    <title>OmniBot v8.1 (Canvas & Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
     <style>
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        :root {
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(20, 20, 25, 0.7);
+            --accent-primary: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --canvas-border: rgba(168, 85, 247, 0.4);
+            --canvas-bg: rgba(15, 15, 20, 0.95);
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #09090b; 
+            color: #e4e4e7;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%), 
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.08), transparent 25%);
+            background-attachment: fixed;
+            transition: all 0.5s ease;
+        }
+        
+        /* Canvas Mode Styles */
+        body.canvas-mode {
+            background-image: 
+                linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)),
+                radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.15), transparent 60%);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        body.canvas-mode .glass-panel {
+            background: var(--canvas-bg);
+            border-color: var(--canvas-border);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
+        }
 
-        @keyframes fadeIn {
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        @keyframes slideUpFade {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .message-anim { animation: fadeIn 0.3s ease-out forwards; }
-        
-        /* Flow Pulse */
-        @keyframes pulse-teal {
-            0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
-        }
-        .flow-ring { animation: pulse-teal 2s infinite; }
+        .message-bubble { animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 
-        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tool-item:hover { background: rgba(255,255,255,0.05); transform: translateX(2px); }
+        
+        .typing-dot {
+            width: 5px; height: 5px; border-radius: 50%; background-color: #a1a1aa;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
         
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
+        /* Markdown */
+        .prose h1, .prose h2, .prose h3 { color: #fff; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
+        .prose p { margin-bottom: 1em; line-height: 1.6; color: #d4d4d8; }
+        .prose strong { color: #fff; font-weight: 600; }
+        .prose a { color: #60a5fa; text-decoration: none; }
+        .prose code { background: rgba(255,255,255,0.1); padding: 0.2em 0.4em; border-radius: 0.3em; font-family: 'JetBrains Mono'; font-size: 0.85em; color: #e2e8f0; }
+        .prose pre { background: #18181b; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin: 1em 0; border: 1px solid var(--glass-border); }
+        .prose pre code { background: transparent; padding: 0; color: inherit; }
+        .prose img { border-radius: 0.75rem; margin-top: 1em; }
         
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #52525b; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-screen flex flex-col items-center justify-center font-sans overflow-hidden">
+<body class="h-screen flex flex-col overflow-hidden">
 
-    <!-- Main Container -->
-    <div class="w-full max-w-5xl h-full md:h-[90vh] flex flex-col bg-slate-900 md:rounded-2xl shadow-2xl overflow-hidden border border-slate-800 relative ring-1 ring-slate-800">
-        
-        <!-- Header -->
-        <div class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center z-10 shadow-lg relative overflow-hidden">
-            <!-- Background Decoration -->
-            <div class="absolute top-0 right-0 w-96 h-full bg-gradient-to-l from-teal-900/20 to-transparent pointer-events-none"></div>
-
-            <div class="flex items-center gap-4">
-                <div class="relative w-4 h-4 rounded-full bg-teal-500 flow-ring z-10" id="status-dot"></div>
-                <div class="z-10">
-                    <h1 class="font-bold text-xl tracking-wide text-white flex items-center gap-2">
-                        Omni<span class="text-teal-400">Bot</span> 
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">v17.0</span>
-                    </h1>
-                    <div class="flex gap-3 text-[10px] text-slate-400 font-mono mt-0.5">
-                        <span class="flex items-center gap-1"><i class="ph-bold ph-globe"></i> <span id="api-indicator">22 SOURCES</span></span>
-                        <span class="flex items-center gap-1"><i class="ph-bold ph-waves"></i> <span id="mood-indicator">FLOW STATE</span></span>
-                    </div>
+    <!-- HEADER -->
+    <header class="h-16 flex-none glass-panel z-20 flex items-center justify-between px-6 sticky top-0">
+        <div class="flex items-center gap-4">
+            <div id="header-icon" class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 ring-1 ring-white/10 transition-all duration-500">
+                <i class="fa-solid fa-cube text-white text-sm"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v8.1</span></h1>
+                <div class="flex items-center gap-2">
+                    <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] transition-colors"></span>
+                    <p class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase" id="status-text">Active</p>
                 </div>
             </div>
-            <div class="text-xs text-slate-500 font-mono text-right z-10" id="status-text">Conversational Flow</div>
         </div>
+        <div class="flex gap-2 items-center">
+            <button onclick="toggleCanvas()" id="canvas-toggle" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-xs font-medium text-zinc-300 group">
+                <i class="fa-solid fa-terminal text-zinc-500 group-hover:text-purple-400 transition-colors"></i>
+                <span class="hidden md:inline">Canvas</span>
+            </button>
+            <button onclick="clearChat()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-zinc-400 hover:text-red-400 transition-colors" title="Clear Chat">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+        </div>
+    </header>
 
-        <!-- Chat Area -->
-        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-6 relative scroll-smooth bg-gradient-to-b from-slate-900 to-slate-900/95">
-            <div class="flex flex-col gap-1 items-start message-anim group">
-                <div class="bg-slate-800 border border-slate-700 text-slate-200 px-5 py-3 rounded-2xl rounded-tl-sm max-w-[90%] text-sm shadow-sm group-hover:shadow-md transition-shadow">
-                    <p class="font-semibold text-teal-300 mb-1">OmniBot v17.0 "Flow"</p>
-                    <p>I am now a conversational partner. I analyze sentence structure to give human-like responses.</p>
-                    <div class="grid grid-cols-2 gap-2 mt-3 text-xs text-slate-400">
-                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">💬 <strong>"I think space is cool"</strong></div>
-                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">🐶 <strong>"Show me a dog"</strong></div>
-                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">❤️ <strong>"I love pizza"</strong></div>
-                        <div class="bg-slate-900/50 p-2 rounded border border-slate-700/50 hover:border-teal-500/50 transition-colors cursor-help">🌍 <strong>"Capital of France"</strong></div>
+    <!-- MAIN CHAT AREA -->
+    <main class="flex-1 flex flex-col min-h-0 relative">
+        <div id="chat-box" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth">
+            <!-- Welcome Message -->
+            <div class="flex gap-4 message-bubble max-w-4xl mx-auto w-full">
+                <div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>
+                <div class="space-y-2 flex-1">
+                    <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
+                    <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
+                        <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v8.1</h2>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            <button onclick="fillInput('News about Poland')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                <span class="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-regular fa-newspaper"></i></span>
+                                <span>News (Poland)</span>
+                            </button>
+                            <button onclick="enableCanvasAndType('script a python calculator')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-code"></i></span>
+                                <span>Canvas Script</span>
+                            </button>
+                            <button onclick="fillInput('Research the economy using PLN')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-book-open"></i></span>
+                                <span>Deep Research</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <span class="text-[10px] text-slate-600 ml-1 font-mono">SYSTEM</span>
-            </div>
-        </div>
-
-        <!-- Typing Indicator -->
-        <div id="typing-indicator" class="hidden px-6 py-2">
-            <div class="bg-slate-800 border border-slate-700 w-16 h-9 rounded-2xl flex items-center justify-center gap-1.5 shadow-sm">
-                <div class="w-1.5 h-1.5 bg-teal-400 rounded-full typing-dot"></div>
-                <div class="w-1.5 h-1.5 bg-teal-400 rounded-full typing-dot"></div>
-                <div class="w-1.5 h-1.5 bg-teal-400 rounded-full typing-dot"></div>
             </div>
         </div>
 
         <!-- Input Area -->
-        <form id="chat-form" class="p-4 bg-slate-900 border-t border-slate-800 flex gap-3">
-            <div class="flex-1 relative">
-                <input 
-                    type="text" 
-                    id="user-input" 
-                    class="w-full bg-slate-800/50 border border-slate-700 text-slate-100 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all placeholder-slate-600 text-sm shadow-inner"
-                    placeholder="Chat with me..."
-                    autocomplete="off"
-                >
+        <div class="flex-none p-6 z-20 w-full max-w-4xl mx-auto">
+            <div class="relative group">
+                <!-- Tools Menu -->
+                <div id="tools-menu" class="absolute bottom-full left-0 mb-4 w-64 glass-panel rounded-2xl shadow-2xl hidden flex flex-col z-50 transform transition-all origin-bottom-left max-h-80 overflow-y-auto custom-scrollbar border border-zinc-700/50 p-1">
+                    <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Research & Data</div>
+                    <button onclick="setPrefix('research ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400"><i class="fa-solid fa-microscope"></i></div>
+                        <div><div class="font-medium">Deep Research</div><div class="text-[10px] text-zinc-500">Comprehensive report</div></div>
+                    </button>
+                    <button onclick="setPrefix('news about ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400"><i class="fa-regular fa-newspaper"></i></div>
+                        <div><div class="font-medium">Global News</div><div class="text-[10px] text-zinc-500">Live headlines</div></div>
+                    </button>
+                    
+                    <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Dev & Canvas</div>
+                    <button onclick="enableCanvasAndType('script ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-code"></i></div>
+                        <div><div class="font-medium">Generate Code</div><div class="text-[10px] text-zinc-500">Multi-language script</div></div>
+                    </button>
+                    <button onclick="setPrefix('find repo ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white"><i class="fa-brands fa-github"></i></div>
+                        <div><div class="font-medium">Find Repo</div><div class="text-[10px] text-zinc-500">GitHub search</div></div>
+                    </button>
+                    
+                    <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
+                    <button onclick="setPrefix('image of ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400"><i class="fa-solid fa-image"></i></div>
+                        <div><div class="font-medium">Generate Image</div><div class="text-[10px] text-zinc-500">AI Art creation</div></div>
+                    </button>
+                </div>
+
+                <div id="input-glow" class="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 blur-md pointer-events-none"></div>
+                <form id="chat-form" class="relative flex items-center glass-panel rounded-2xl p-1.5 shadow-xl bg-black/40">
+                    <button type="button" id="tools-btn" onclick="toggleTools()" class="w-10 h-10 text-zinc-400 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-plus text-sm"></i>
+                    </button>
+                    <input type="text" id="user-input" class="w-full bg-transparent text-white px-4 py-3 focus:outline-none placeholder-zinc-500 font-normal text-sm" placeholder="Message OmniBot..." autocomplete="off">
+                    <button type="submit" id="send-btn" class="w-10 h-10 bg-white text-black hover:bg-zinc-200 rounded-xl transition-all duration-300 flex items-center justify-center flex-shrink-0 shadow-lg shadow-white/5">
+                        <i id="send-icon" class="fa-solid fa-arrow-up text-sm"></i>
+                    </button>
+                </form>
             </div>
-            <button 
-                type="submit" 
-                class="bg-teal-600 hover:bg-teal-500 text-white rounded-xl px-5 py-3.5 transition-all disabled:opacity-50 font-medium shadow-lg shadow-teal-900/20 hover:shadow-teal-500/20 flex items-center justify-center active:scale-95"
-            >
-                <i class="ph-bold ph-paper-plane-right text-lg"></i>
-            </button>
-        </form>
+            <div class="text-center mt-4 flex justify-center gap-6 text-[10px] text-zinc-600 font-medium">
+                <span id="latency-indicator" class="flex items-center gap-1.5"><span class="w-1 h-1 rounded-full bg-emerald-500"></span>Ready</span>
+                <span>•</span>
+                <span>Swarm Intelligence</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Fullscreen Modal -->
+    <div id="fullscreen-modal" class="fixed inset-0 z-50 bg-black/95 hidden flex items-center justify-center p-4 backdrop-blur-md opacity-0 transition-opacity duration-300" onclick="closeFullscreen()">
+        <img id="fullscreen-img" src="" class="max-h-[90vh] max-w-[90vw] rounded-2xl shadow-2xl transform transition-transform duration-300 scale-95 shadow-black/50">
+        <button class="absolute top-6 right-6 text-white/50 hover:text-white bg-black/50 hover:bg-black/80 rounded-full w-10 h-10 flex items-center justify-center transition-all backdrop-blur-sm"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <script>
-        /**
-         * --- OMNIBOT v17.0 "FLOW" ---
-         * FEATURES:
-         * 1. KEYWORD REFLECTION: Extracts subjects from user input to form relevant questions.
-         * 2. TOPIC STEERING: Changes topic if conversation stalls.
-         * 3. EXPANDED PATTERNS: 100+ logical flows.
-         */
-
-        // --- 1. STATE ---
-        const state = {
-            mood: 'neutral',
-            lastIntent: null,
-            contextSubject: null
+        let abortController = null;
+        const QUERY_CACHE = new Map();
+        
+        const AI_STATE = {
+            research: { active: false, query: null },
+            canvasMode: false
         };
 
-        const updateMood = (sentiment) => {
-            if (sentiment > 0) state.mood = 'happy';
-            else if (sentiment < 0) state.mood = 'sympathetic';
-            else state.mood = 'neutral';
-            document.getElementById('mood-indicator').innerText = state.mood.toUpperCase();
+        const CURRENCY_MAP = {
+            'pln': 'Poland', 'zł': 'Poland', 'eur': 'Europe', 'usd': 'USA', 'gbp': 'UK', 'jpy': 'Japan', 'cny': 'China', 'inr': 'India'
         };
 
-        // --- 2. THOUGHT LOGGER ---
-        class ThoughtLogger {
-            constructor() { this.logs = []; }
-            add(text) { 
-                this.logs.push(text); 
-                console.log(`[Brain] ${text}`); 
-            }
-            getHTML() {
-                return `
-                <details class="mb-3 group" open>
-                    <summary class="text-[10px] font-mono text-teal-400/80 cursor-pointer hover:text-teal-300 select-none flex items-center gap-2 mb-2 opacity-60 hover:opacity-100 transition-opacity">
-                        <i class="ph-bold ph-chats-circle"></i> THOUGHT STREAM
-                    </summary>
-                    <div class="pl-3 border-l-2 border-teal-500/20 text-[10px] font-mono text-slate-500 space-y-1">
-                        ${this.logs.map(log => `<div>> ${log}</div>`).join('')}
+        // --- NEW CODING APIS ---
+        const TOOL_REGISTRY = [
+            { id: 'pollinations', name: 'CORTEX', type: 'chat', url: 'https://text.pollinations.ai/' },
+            { id: 'pollinations_img', name: 'DREAMER', type: 'image', url: 'https://image.pollinations.ai/prompt/' },
+            
+            // Research & News
+            { id: 'research', name: 'RESEARCHER', keywords: ['research', 'report on'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
+            { id: 'googlenews', name: 'NEWS', keywords: ['news', 'headline'], url: 'https://news.google.com/rss/search?q=' },
+            { id: 'websearch', name: 'SEARCH', keywords: ['search', 'find', 'lookup'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
+            
+            // Coding & Canvas Tools (No Keys, Free)
+            { id: 'npm', name: 'NPM', keywords: ['npm', 'node package'], url: 'https://registry.npmjs.org/-/v1/search?text=' },
+            { id: 'pypi', name: 'PYPI', keywords: ['pypi', 'python package'], url: 'https://pypi.org/pypi/' }, // needs suffix
+            { id: 'crates', name: 'CRATES', keywords: ['cargo', 'rust crate'], url: 'https://crates.io/api/v1/crates?q=' },
+            { id: 'packagist', name: 'PACKAGIST', keywords: ['composer', 'php package'], url: 'https://packagist.org/search.json?q=' },
+            { id: 'nuget', name: 'NUGET', keywords: ['nuget', 'c# package'], url: 'https://azuresearch-usnc.nuget.org/query?q=' },
+            { id: 'maven', name: 'MAVEN', keywords: ['maven', 'java jar'], url: 'https://search.maven.org/solrsearch/select?q=' },
+            { id: 'pubdev', name: 'PUB', keywords: ['flutter', 'dart package'], url: 'https://pub.dev/api/search?q=' },
+            { id: 'dockerhub', name: 'DOCKER', keywords: ['docker image'], url: 'https://hub.docker.com/v2/search/repositories/?query=' },
+            { id: 'linuxman', name: 'MANPAGES', keywords: ['linux command'], url: 'https://man.archlinux.org/search?json=1&q=' },
+            { id: 'cdnjs', name: 'CDN', keywords: ['cdn', 'library'], url: 'https://api.cdnjs.com/libraries?search=' },
+            
+            // Git
+            { id: 'ghrepo', name: 'GIT-REPO', keywords: ['github repo'], url: 'https://api.github.com/search/repositories?per_page=1&q=' },
+
+            // Others
+            { id: 'dictionary', name: 'DICT', keywords: ['define'], url: 'https://api.dictionaryapi.dev/api/v2/entries/en/' },
+            { id: 'urbandictionary', name: 'URBAN', keywords: ['slang'], url: 'https://api.urbandictionary.com/v0/define?term=' }
+        ];
+
+        // --- UI HELPERS & MISSING FUNCTIONS RESTORED ---
+        const chatBox = document.getElementById('chat-box');
+        const statusText = document.getElementById('status-text');
+        const sendBtn = document.getElementById('send-btn');
+        const sendIcon = document.getElementById('send-icon');
+
+        function addThinkingMessage() {
+            const div = document.createElement('div');
+            div.className = `flex gap-4 message-bubble thinking-bubble max-w-4xl mx-auto w-full`;
+            const avatar = `<div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>`;
+            const dots = `
+                <div class="glass-panel px-4 py-3 rounded-2xl rounded-tl-none inline-flex items-center gap-3 h-10">
+                    <div class="flex gap-1.5">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
                     </div>
-                </details>`;
+                    <span id="thinking-text" class="text-[10px] text-zinc-400 font-medium tracking-wide uppercase">Processing</span>
+                </div>
+            `;
+            div.innerHTML = `${avatar}<div class="space-y-1">${dots}</div>`;
+            div.id = 'current-thinking-bubble';
+            chatBox.appendChild(div);
+            requestAnimationFrame(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }));
+            return div;
+        }
+
+        function updateThinkingMessage(el, text) {
+            const textSpan = el.querySelector('#thinking-text');
+            if (textSpan) textSpan.innerText = text;
+        }
+
+        function removeThinkingMessage(el) {
+            if(el) el.remove();
+            else {
+                const existing = document.getElementById('current-thinking-bubble');
+                if(existing) existing.remove();
             }
         }
 
-        // --- 3. DATA APIs ---
-        const APIs = {
-            weather: async (city) => {
-                const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=en&format=json`).then(r=>r.json());
-                if(!geo.results) return null;
-                const { latitude, longitude, name, country } = geo.results[0];
-                const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`).then(r=>r.json());
-                return { type: 'weather', name, country, temp: w.current_weather.temperature };
-            },
-            crypto: async (coin) => {
-                const map = { "btc": "bitcoin", "eth": "ethereum" };
-                const id = map[coin] || coin;
-                const r = await fetch(`https://api.coincap.io/v2/assets/${id}`);
-                if(!r.ok) return null;
-                const d = (await r.json()).data;
-                return { type: 'crypto', name: d.name, price: parseFloat(d.priceUsd).toFixed(2) };
-            },
-            dog: async () => fetch('https://dog.ceo/api/breeds/image/random').then(r=>r.json()).then(d => ({ type: 'image', url: d.message })),
-            cat: async () => fetch('https://meowfacts.herokuapp.com/').then(r=>r.json()).then(d => ({ type: 'fact', text: d.data[0] })),
-            fact: async () => fetch('https://uselessfacts.jsph.pl/random.json?language=en').then(r=>r.json()).then(d => ({ type: 'fact', text: d.text })),
-            joke: async () => fetch('https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single').then(r=>r.json()).then(d => ({ type: 'joke', text: d.joke })),
-            quote: async () => fetch('https://api.quotable.io/random').then(r=>r.json()).then(d => ({ type: 'quote', text: d.content, author: d.author })),
-            monster: async () => {
-                const r = await fetch('https://www.dnd5eapi.co/api/monsters');
-                const d = await r.json();
-                const random = d.results[Math.floor(Math.random() * d.results.length)];
-                return { type: 'nerd', text: `A wild **${random.name}** appears!` };
-            },
-            nationality: async (name) => {
-                const r = await fetch(`https://api.nationalize.io/?name=${name}`);
-                const d = await r.json();
-                if(d.country.length === 0) return null;
-                return { type: 'nat', name, country: d.country[0].country_id, prob: Math.round(d.country[0].probability * 100) };
-            },
-            book: async (q) => fetch(`https://openlibrary.org/search.json?q=${q}&limit=1`).then(r=>r.json()).then(d => d.docs[0] ? { type: 'book', title: d.docs[0].title, author: d.docs[0].author_name?.[0] } : null),
-            advice: async () => fetch('https://api.adviceslip.com/advice').then(r=>r.json()).then(d => ({ type: 'advice', text: d.slip.advice })),
-            country: async (n) => fetch(`https://restcountries.com/v3.1/name/${n}`).then(r=>r.json()).then(d => d[0] ? { type: 'geo', name: d[0].name.common, region: d[0].region } : null),
-            dict: async (w) => fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${w}`).then(r=>r.json()).then(d => d[0] ? { type: 'dict', word: w, def: d[0].meanings[0].definitions[0].definition } : null)
-        };
+        function addMessage(content, sender, type = 'text') {
+            const div = document.createElement('div');
+            div.className = `flex gap-4 message-bubble max-w-4xl mx-auto w-full ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+            const avatar = sender === 'user' 
+                ? `<div class="w-8 h-8 rounded-full bg-blue-600 flex-shrink-0 flex items-center justify-center text-white text-xs shadow-lg shadow-blue-500/30 mt-1"><i class="fa-solid fa-user"></i></div>`
+                : `<div class="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 flex items-center justify-center text-zinc-400 text-xs border border-zinc-700/50 mt-1">OB</div>`;
+            let innerHTML = '';
+            if (type === 'image') {
+                innerHTML = `
+                <div class="group relative bg-zinc-900/50 p-1.5 rounded-2xl ${sender === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'} border border-zinc-800/50 inline-block overflow-hidden shadow-sm">
+                    <img src="${content}" class="max-w-xs md:max-w-sm rounded-xl cursor-pointer transition-transform duration-300 group-hover:scale-[1.01]" onload="this.scrollIntoView({behavior:'smooth', block:'end'})" onerror="this.src='https://placehold.co/400x300?text=Image+Load+Error'" onclick="openFullscreen('${content}')">
+                    <button onclick="event.stopPropagation(); downloadImage('${content}')" class="absolute top-4 right-4 bg-black/60 hover:bg-blue-500 text-white w-9 h-9 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md shadow-xl translate-y-2 group-hover:translate-y-0" title="Download"><i class="fa-solid fa-download text-xs"></i></button>
+                </div>`;
+            } else {
+                const parsed = marked.parse(content);
+                const safeContent = encodeURIComponent(content);
+                innerHTML = `<div class="group relative glass-panel px-6 py-4 rounded-2xl ${sender === 'user' ? 'rounded-tr-none bg-blue-600/10 border-blue-500/20 text-blue-100' : 'rounded-tl-none text-zinc-200'} text-sm leading-relaxed shadow-sm prose prose-invert max-w-none">
+                    ${parsed}
+                    <button onclick="copyToClipboard(this, '${safeContent}')" class="absolute top-3 right-3 text-zinc-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm" title="Copy"><i class="fa-regular fa-copy text-xs"></i></button>
+                </div>`;
+            }
+            div.innerHTML = sender === 'user' ? `${innerHTML}${avatar}` : `${avatar}<div class="space-y-1 flex-1 min-w-0"><div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">OmniBot</div>${innerHTML}</div>`;
+            chatBox.appendChild(div);
+            requestAnimationFrame(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }));
+        }
 
-        // --- 4. CONVERSATIONAL ENGINE (ELIZA 2.0) ---
-        
-        const chatPatterns = [
-            // INTRO / GREETINGS
-            { check: /^(hi|hello|hey|greetings|yo)/i, reply: () => [
-                "Hey! What's on your mind today?",
-                "Hello there. Ready to chat or find some data?",
-                "Hi! I'm online and listening."
-            ]},
-            { check: /how are you/i, reply: () => [
-                "I'm functioning perfectly. How are you feeling?",
-                "My circuits are happy. What about you?",
-                "I'm good! Thanks for asking."
-            ]},
+        async function downloadImage(url) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = `omnibot-${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch { window.open(url, '_blank'); }
+        }
+
+        function copyToClipboard(btn, encoded) {
+            const ta = document.createElement("textarea");
+            ta.value = decodeURIComponent(encoded);
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            const i = btn.querySelector('i');
+            i.className = 'fa-solid fa-check text-emerald-400';
+            setTimeout(() => i.className = 'fa-regular fa-copy', 2000);
+        }
+
+        function openFullscreen(src) {
+             const m = document.getElementById('fullscreen-modal');
+             const i = document.getElementById('fullscreen-img');
+             i.src = src; m.classList.remove('hidden');
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-modal').classList.add('hidden'); }
+
+        // --- CANVAS MODE ---
+        function toggleCanvas() {
+            AI_STATE.canvasMode = !AI_STATE.canvasMode;
+            const btn = document.getElementById('canvas-toggle');
+            const icon = document.getElementById('header-icon');
+            const dot = document.getElementById('status-dot');
+            const input = document.getElementById('user-input');
+            const body = document.body;
             
-            // EMOTIONS & FEELINGS
-            { check: /i (feel|am) (sad|upset|depressed|lonely)/i, reply: (m) => [
-                `I'm sorry to hear you're ${m[2]}. Do you want to talk about it?`,
-                `Being ${m[2]} is tough. Want a dog picture to cheer you up?`,
-                `Why are you feeling ${m[2]} today?`
-            ]},
-            { check: /i (feel|am) (happy|good|great|excited)/i, reply: (m) => [
-                `That's awesome! What's making you feel ${m[2]}?`,
-                `I love that energy! Being ${m[2]} suits you.`,
-                `Glad to hear it! Keep that vibe going.`
-            ]},
-            { check: /i (like|love|enjoy) (.+)/i, reply: (m) => {
-                state.contextSubject = m[2];
-                return [
-                    `What is it about ${m[2]} that you enjoy?`,
-                    `${m[2]} is pretty cool. How long have you liked it?`,
-                    `I've heard good things about ${m[2]}.`
-                ];
-            }},
-            { check: /i (hate|dislike|cant stand) (.+)/i, reply: (m) => {
-                state.contextSubject = m[2];
-                return [
-                    `What makes you dislike ${m[2]}?`,
-                    `I understand. ${m[2]} isn't for everyone.`,
-                    `Interesting. Why do you feel that way about ${m[2]}?`
-                ];
-            }},
+            if (AI_STATE.canvasMode) {
+                body.classList.add('canvas-mode');
+                btn.classList.replace('bg-white/5', 'bg-purple-500/20');
+                btn.classList.replace('text-zinc-300', 'text-purple-300');
+                btn.classList.replace('border-white/10', 'border-purple-500/50');
+                icon.classList.replace('from-blue-600', 'from-purple-600');
+                icon.classList.replace('to-indigo-600', 'to-pink-600');
+                dot.classList.replace('bg-emerald-500', 'bg-purple-500');
+                input.placeholder = "Canvas Active: Architecture & Coding Mode...";
+            } else {
+                body.classList.remove('canvas-mode');
+                btn.classList.replace('bg-purple-500/20', 'bg-white/5');
+                btn.classList.replace('text-purple-300', 'text-zinc-300');
+                btn.classList.replace('border-purple-500/50', 'border-white/10');
+                icon.classList.replace('from-purple-600', 'from-blue-600');
+                icon.classList.replace('to-pink-600', 'to-indigo-600');
+                dot.classList.replace('bg-purple-500', 'bg-emerald-500');
+                input.placeholder = "Message OmniBot...";
+            }
+        }
 
-            // OPINIONS & THOUGHTS
-            { check: /i think (.+)/i, reply: (m) => [
-                `That's an interesting perspective. Why do you think that?`,
-                `Valid point. Tell me more.`,
-                `I hadn't considered that. Go on.`
-            ]},
-            { check: /do you think (.+)/i, reply: (m) => [
-                `I try not to have biased opinions, but it's a complex topic.`,
-                `It depends on how you look at it. What's your take?`,
-                `I think there are many sides to that story.`
-            ]},
+        function enableCanvasAndType(text) {
+            if(!AI_STATE.canvasMode) toggleCanvas();
+            fillInput(text);
+        }
+
+        // --- PROCESSING ---
+        async function processInput(text) {
+            if (abortController) { abortController.abort(); removeThinkingMessage(); }
             
-            // QUESTIONS ABOUT BOT
-            { check: /are you (real|human|alive)/i, reply: () => [
-                "I am code, but my conversation is real.",
-                "I'm a virtual entity, but I like to think I have a personality.",
-                "I exist in the browser, so I'm as real as this website."
-            ]},
-            { check: /who made you/i, reply: () => [
-                "I was built by a developer using JavaScript and TensorFlow.",
-                "I am a construct of code and logic."
-            ]},
+            abortController = new AbortController();
+            const signal = abortController.signal;
+            const startTime = Date.now();
+            setProcessingState(true);
+            const thinkingEl = addThinkingMessage();
+
+            // 1. CANVAS FLOW
+            if (AI_STATE.canvasMode) {
+                try {
+                    await executeCanvas(text, thinkingEl, signal);
+                } catch(e) { 
+                    if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Canvas Error.", 'ai'); }
+                } finally {
+                    if (abortController && !signal.aborted) {
+                        setProcessingState(false);
+                        abortController = null;
+                    }
+                }
+                return;
+            }
+
+            // 2. RESEARCH INTERCEPTION
+            if (AI_STATE.research.active) {
+                const query = AI_STATE.research.query;
+                const context = text;
+                AI_STATE.research.active = false;
+                try {
+                    await executeTool({ id: 'research', url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' }, `${query}. Context: ${context}`, thinkingEl, signal);
+                } catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Research error.", 'ai'); } }
+                finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
+                return;
+            }
+
+            // 3. NORMAL TOOLS
+            let selectedTool = findTool(text);
+            let processedText = text;
+
+            try {
+                if (!selectedTool) {
+                    updateThinkingMessage(thinkingEl, "Translating...");
+                    const translated = await translateText(text, signal);
+                    const translatedTool = findTool(translated);
+                    if (translatedTool) {
+                        selectedTool = translatedTool;
+                        processedText = translated;
+                    }
+                }
+
+                if (selectedTool) await executeTool(selectedTool, processedText, thinkingEl, signal);
+                else await queryCortex(text, thinkingEl, signal);
+
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    removeThinkingMessage(thinkingEl);
+                    addMessage("Network Error.", 'ai');
+                }
+            } finally {
+                if (abortController && !signal.aborted) {
+                    setProcessingState(false);
+                    abortController = null;
+                    const lat = Date.now() - startTime;
+                    document.getElementById('latency-indicator').innerHTML = `<span class="w-1 h-1 rounded-full bg-emerald-500"></span> ${lat}ms`;
+                }
+            }
+        }
+
+        // --- CANVAS EXECUTION LOGIC ---
+        async function executeCanvas(text, thinkingEl, signal) {
+            updateThinkingMessage(thinkingEl, "Analyzing architecture...");
+            const query = text.replace(/script|code|write|program|function/gi, "").trim();
+            const lower = query.toLowerCase();
+
+            // Detect Language & Select Repository
+            let repos = [{ id: 'ghrepo', url: TOOL_REGISTRY.find(t=>t.id==='ghrepo').url + encodeURIComponent(query) }];
             
-            // ACTIONS
-            { check: /what can you do/i, reply: () => [
-                "I can fetch weather, crypto prices, book info, definitions, dog photos, or just chat with you about life.",
-                "I'm a multi-purpose bot. Try asking 'Show me a dog' or 'Define paradox'."
-            ]},
+            if(lower.includes('node') || lower.includes('js') || lower.includes('react')) repos.push({id:'npm', url: `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(query)}&size=3`});
+            else if(lower.includes('python') || lower.includes('pip')) repos.push({id:'pypi', url: `https://pypi.org/pypi/${encodeURIComponent(query.split(' ')[0])}/json`}); // Approximation
+            else if(lower.includes('rust')) repos.push({id:'crates', url: `https://crates.io/api/v1/crates?q=${encodeURIComponent(query)}&per_page=3`});
+            else if(lower.includes('php')) repos.push({id:'packagist', url: `https://packagist.org/search.json?q=${encodeURIComponent(query)}`});
+            else if(lower.includes('java')) repos.push({id:'maven', url: `https://search.maven.org/solrsearch/select?q=${encodeURIComponent(query)}&rows=3&wt=json`});
+            else if(lower.includes('c#') || lower.includes('net')) repos.push({id:'nuget', url: `https://azuresearch-usnc.nuget.org/query?q=${encodeURIComponent(query)}`});
+            else if(lower.includes('flutter')) repos.push({id:'pubdev', url: `https://pub.dev/api/search?q=${encodeURIComponent(query)}`});
+            else if(lower.includes('docker')) repos.push({id:'dockerhub', url: `https://hub.docker.com/v2/search/repositories/?query=${encodeURIComponent(query)}`});
 
-            // RANDOM FILLERS
-            { check: /^(ok|okay|sure|fine|cool|nice|wow)$/i, reply: () => [
-                "Indeed.",
-                "Yeah.",
-                "So, what else is new?",
-                "Glad we agree."
-            ]},
-            { check: /^(no|nope|nah)$/i, reply: () => [
-                "Fair enough.",
-                "Why not?",
-                "Alright then."
-            ]},
-            { check: /^(yes|yeah|yep)$/i, reply: () => [
-                "Awesome.",
-                "Tell me more.",
-                "I thought so."
-            ]}
-        ];
+            updateThinkingMessage(thinkingEl, `Scanning ${repos.length} package registries...`);
+            
+            const results = await Promise.all(repos.map(async r => {
+                try {
+                    const res = await fetchProxy(r.url); // Use proxy for all to be safe
+                    const json = await res.json();
+                    return { id: r.id, data: json };
+                } catch { return null; }
+            }));
 
-        // --- 5. LOGIC & FALLBACKS ---
+            // Build Context
+            let context = "";
+            results.forEach(r => {
+                if(!r) return;
+                if(r.id === 'ghrepo' && r.data.items) {
+                    r.data.items.slice(0,2).forEach(i => context += `GitHub: ${i.full_name} (${i.description})\n`);
+                } else if(r.id === 'npm' && r.data.objects) {
+                    r.data.objects.forEach(o => context += `NPM: ${o.package.name} v${o.package.version}\n`);
+                } else if(r.id === 'crates' && r.data.crates) {
+                    r.data.crates.forEach(c => context += `Crate: ${c.name} (Downloads: ${c.downloads})\n`);
+                }
+                // ... Add other parsers here ...
+            });
+            if(!context) context = "No external packages found. Use standard libraries.";
 
-        function getReflection(text) {
-            // Extracts the longest noun/verb phrase to ask about it
-            const words = text.split(' ');
-            const significant = words.filter(w => w.length > 4);
-            if (significant.length > 0) {
-                const topic = significant[Math.floor(Math.random() * significant.length)].replace(/[^\w]/g, '');
-                return [
-                    `Tell me more about **${topic}**.`,
-                    `What are your thoughts on **${topic}**?`,
-                    `How does **${topic}** fit into the bigger picture?`,
-                    `Is **${topic}** important to you?`
-                ];
+            updateThinkingMessage(thinkingEl, "Compiling solution...");
+            const prompt = `Role: Senior Software Architect. Mode: Canvas.
+            Task: ${text}
+            
+            Real-world Context Found:
+            ${context}
+            
+            Output:
+            1. Full, runnable code file.
+            2. Use comments for logic.
+            3. Include installation steps for packages found in context.`;
+
+            const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+            const aiReq = await fetchWithRetry(aiUrl, { signal });
+            const aiRes = await aiReq.text();
+
+            removeThinkingMessage(thinkingEl);
+            addMessage(aiRes, 'ai');
+        }
+
+        // --- STANDARD TOOL EXECUTION (Preserved & Cleaned) ---
+        async function executeTool(tool, text, thinkingEl, signal) {
+            let url = tool.url;
+            let query = text.split(' ').pop(); 
+
+            if (tool.id === 'research') {
+                // ... (Research Logic Preserved from v7.3) ...
+                if (!text.includes("Context:")) {
+                    query = text.replace(/research|report on/gi, '').trim();
+                    updateThinkingMessage(thinkingEl, "Clarifying scope...");
+                    const qUrl = `https://text.pollinations.ai/${encodeURIComponent(`Research: "${query}". Ask 3 questions. Bullet points.`)}?model=openai`;
+                    const res = await fetchWithRetry(qUrl, { signal });
+                    const q = await res.text();
+                    removeThinkingMessage(thinkingEl);
+                    addMessage(`**Clarify for "${query}":**\n\n${q}`, 'ai');
+                    AI_STATE.research.active = true;
+                    AI_STATE.research.query = query;
+                    return;
+                }
+                const fullContext = text.replace("Context:", "");
+                updateThinkingMessage(thinkingEl, "Scanning sources...");
+                const sUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=${encodeURIComponent(fullContext)}`;
+                const res = await fetchWithRetry(sUrl, { signal });
+                const data = await res.json();
+                let cd = data.query?.search ? data.query.search.map(i=>i.snippet.replace(/<[^>]*>/g,'')).join('\n') : "Internal Knowledge";
+                
+                updateThinkingMessage(thinkingEl, "Writing report...");
+                const prompt = `Write research report. Topic: ${fullContext}. Data: ${cd}. Format: Markdown.`;
+                const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+                const aiReq = await fetchWithRetry(aiUrl, { signal });
+                const aiRes = await aiReq.text();
+                removeThinkingMessage(thinkingEl);
+                addMessage(aiRes, 'ai');
+                return;
+            }
+
+            if (tool.id === 'googlenews') {
+                query = text.replace(/news|headlines|about/gi, '').trim();
+                updateThinkingMessage(thinkingEl, "Fetching live news...");
+                const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
+                try {
+                    const res = await fetchProxy(rssUrl);
+                    const txt = await res.text();
+                    const parser = new DOMParser();
+                    const xml = parser.parseFromString(txt, "text/xml");
+                    const items = xml.querySelectorAll("item");
+                    if (items.length > 0) {
+                        let out = `### 📰 News: ${query}\n`;
+                        Array.from(items).slice(0, 5).forEach(i => {
+                            out += `**[${i.querySelector("title").textContent}](${i.querySelector("link").textContent})**\n*${new Date(i.querySelector("pubDate").textContent).toLocaleDateString()}*\n\n`;
+                        });
+                        removeThinkingMessage(thinkingEl);
+                        addMessage(out, 'ai');
+                        return;
+                    }
+                } catch(e) {}
+                // Fallback
+                await executeTool(TOOL_REGISTRY.find(t=>t.id==='websearch'), query, thinkingEl, signal);
+                return;
+            }
+
+            // Generic Handlers
+            if(['websearch', 'dictionary', 'urbandictionary'].includes(tool.id)) {
+                query = text.replace(/search for|define|slang/gi, '').trim();
+                url = `${tool.url}${encodeURIComponent(query)}`;
+                const req = await fetchWithRetry(url, { signal });
+                const res = await req.json();
+                removeThinkingMessage(thinkingEl);
+                
+                if(tool.id==='websearch' && res.query) {
+                    let out = `### 🔍 Search: ${query}\n`;
+                    res.query.search.slice(0,3).forEach(i=>out+=`**${i.title}**\n${i.snippet.replace(/<[^>]*>/g,'')}...\n\n`);
+                    addMessage(out, 'ai');
+                } else if(tool.id==='dictionary' && Array.isArray(res)) {
+                    addMessage(`### 📖 ${res[0].word}\n${res[0].meanings[0].definitions[0].definition}`, 'ai');
+                } else if(tool.id==='urbandictionary' && res.list?.length) {
+                    addMessage(`### 🏙️ ${res.list[0].word}\n${res.list[0].definition}`, 'ai');
+                } else {
+                    addMessage("No results found.", 'ai');
+                }
+                return;
+            }
+
+            if (tool.id === 'pollinations_img') {
+                const prompt = text.replace(/image of/gi, '').trim();
+                removeThinkingMessage(thinkingEl);
+                addMessage(`${tool.url}${encodeURIComponent(prompt)}?nologo=true`, 'ai', 'image');
+                return;
+            }
+        }
+
+        async function queryCortex(text, thinkingEl, signal) {
+            const url = `https://text.pollinations.ai/${encodeURIComponent(text)}`;
+            const res = await fetchWithRetry(url, { signal });
+            const data = await res.text();
+            removeThinkingMessage(thinkingEl);
+            addMessage(data, 'ai');
+        }
+
+        // --- UTILS ---
+        function detectRegion(text) {
+            const lower = text.toLowerCase();
+            for (const [key, region] of Object.entries(CURRENCY_MAP)) {
+                if (lower.includes(key)) return region;
             }
             return null;
         }
 
-        async function getRandomTopic() {
-            const actions = [
-                async () => `Speaking of random things... did you know? ${(await APIs.fact()).text}`,
-                async () => `Let's switch gears. ${(await APIs.joke()).text}`,
-                async () => `Here is something to think about: "${(await APIs.quote()).text}"`,
-                async () => `Need a break? Here is a dog: <br><img src="${(await APIs.dog()).url}" class="mt-2 rounded h-32">`
-            ];
-            return await actions[Math.floor(Math.random() * actions.length)]();
-        }
-
-        // --- 6. MASTER HANDLER ---
-
-        async function handleInput(rawText) {
-            const thoughts = new ThoughtLogger();
-            const text = rawText.trim();
+        function findTool(text) {
             const lower = text.toLowerCase();
-            const noiseWords = ['another', 'one', 'more', 'again', 'and', 'the', 'what', 'is', 'a', 'to', 'of', 'for', 'smth', 'something', 'maybe', 'idk', 'lol', 'wow', 'ok', 'okay', 'so', 'like', 'uh'];
-            
-            thoughts.add(`Input: "${text}"`);
-
-            // 1. CONTEXT RECALL
-            if (/^(another|more|again|one more)/i.test(text) && state.lastIntent) {
-                thoughts.add(`Recalling intent: ${state.lastIntent}`);
-                return await performAction(state.lastIntent, thoughts);
-            }
-
-            // 2. NOISE FILTER FOR DB
-            if (noiseWords.includes(lower)) {
-                thoughts.add("Noise word detected. Engaging Chat.");
-                return { html: thoughts.getHTML() + "Go on, I'm listening." };
-            }
-
-            // 3. CHECK PATTERNS (ELIZA)
-            for (let pattern of chatPatterns) {
-                const match = text.match(pattern.check);
-                if (match) {
-                    thoughts.add("Matched Conversation Pattern");
-                    const replies = pattern.reply(match);
-                    const reply = replies[Math.floor(Math.random() * replies.length)]; // Pick random variant
-                    return { html: thoughts.getHTML() + reply };
-                }
-            }
-
-            // 4. CHECK API INTENTS
-            if (lower.includes("dog")) return await performAction('dog', thoughts);
-            if (lower.includes("cat")) return await performAction('cat', thoughts);
-            if (lower.includes("weather") || lower.includes("temp")) {
-                const city = lower.replace(/weather|temp|in|at|check/g, '').trim();
-                const d = await APIs.weather(city);
-                return { html: thoughts.getHTML() + (d ? `Current weather in **${d.name}**: ${d.temp}°C.` : "I couldn't find that city.") };
-            }
-            if (lower.includes("joke")) return await performAction('joke', thoughts);
-            if (lower.includes("fact") || lower.includes("trivia")) return await performAction('fact', thoughts);
-            if (lower.includes("quote")) return await performAction('quote', thoughts);
-            if (lower.includes("monster")) return await performAction('monster', thoughts);
-            
-            if (lower.includes("define") || lower.includes("meaning")) {
-                const word = lower.split(' ').pop();
-                if (noiseWords.includes(word)) return { html: thoughts.getHTML() + "I can't define that word." };
-                const d = await APIs.dict(word);
-                return { html: thoughts.getHTML() + (d ? `**${d.word}**: ${d.def}` : "Word not found.") };
-            }
-
-            // 5. SMART FALLBACK (REFLECTION & STEERING)
-            thoughts.add("No match found. Attempting Reflection/Steering.");
-            
-            // Try to reflect a keyword
-            const reflections = getReflection(text);
-            if (reflections && Math.random() > 0.3) {
-                const reply = reflections[Math.floor(Math.random() * reflections.length)];
-                return { html: thoughts.getHTML() + reply };
-            }
-
-            // If input is short or boring, change topic
-            if (text.length < 10 || Math.random() > 0.7) {
-                thoughts.add("Conversation stalling. Injecting new topic.");
-                const newTopic = await getRandomTopic();
-                return { html: thoughts.getHTML() + newTopic };
-            }
-
-            // Ultimate generic fallback
-            const generics = [
-                "That's really interesting. Tell me more.",
-                "I see. Why is that?",
-                "Can you elaborate?",
-                "That's a unique way to look at it."
-            ];
-            return { html: thoughts.getHTML() + generics[Math.floor(Math.random() * generics.length)] };
+            if (lower.startsWith('image')) return TOOL_REGISTRY.find(t=>t.id==='pollinations_img');
+            if (lower.startsWith('research')) return TOOL_REGISTRY.find(t=>t.id==='research');
+            if (lower.startsWith('news')) return TOOL_REGISTRY.find(t=>t.id==='googlenews');
+            if (lower.startsWith('search')) return TOOL_REGISTRY.find(t=>t.id==='websearch');
+            if (lower.startsWith('define')) return TOOL_REGISTRY.find(t=>t.id==='dictionary');
+            if (lower.startsWith('slang')) return TOOL_REGISTRY.find(t=>t.id==='urbandictionary');
+            return TOOL_REGISTRY.find(t => t.keywords && t.keywords.some(k => lower.includes(k)));
         }
 
-        async function performAction(intent, thoughts) {
-            thoughts.add(`Action: ${intent.toUpperCase()}`);
-            state.lastIntent = intent;
-            
-            let data, html;
-            if (intent === 'dog') {
-                data = await APIs.dog();
-                html = `<img src="${data.url}" class="mt-2 rounded-md shadow-lg max-h-60" alt="Dog">`;
-            } else if (intent === 'cat') {
-                data = await APIs.cat();
-                html = data.text;
-            } else if (intent === 'joke') {
-                data = await APIs.joke();
-                html = data.text;
-            } else if (intent === 'fact') {
-                data = await APIs.fact();
-                html = data.text;
-            } else if (intent === 'quote') {
-                data = await APIs.quote();
-                html = `"${data.text}" - ${data.author}`;
-            } else if (intent === 'monster') {
-                data = await APIs.monster();
-                html = data.text;
+        async function translateText(text, signal) {
+            if (/^[a-zA-Z0-9\s]+$/.test(text)) return text;
+            const res = await fetchWithRetry(`https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&system=Translate to English`, { signal });
+            return await res.text();
+        }
+
+        async function fetchProxy(url) {
+            try { return await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`); }
+            catch { return await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); }
+        }
+
+        async function fetchWithRetry(url, options={}, retries=1) {
+            if(QUERY_CACHE.has(url)) return QUERY_CACHE.get(url);
+            try {
+                const res = await fetch(url, options);
+                if(!res.ok) throw new Error("Err");
+                if(!options.method) QUERY_CACHE.set(url, res.clone());
+                return res;
+            } catch(e) {
+                if(retries>0) return fetchWithRetry(url, options, retries-1);
+                throw e;
             }
-            return { html: thoughts.getHTML() + html };
         }
 
-        // --- UI ---
-        const chatBox = document.getElementById('chat-box');
-        const input = document.getElementById('user-input');
-        const form = document.getElementById('chat-form');
-        const typing = document.getElementById('typing-indicator');
-
-        function addMessage(html, isUser) {
-            const div = document.createElement('div');
-            div.className = `flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'} message-anim`;
-            const bub = document.createElement('div');
-            bub.className = `px-5 py-3 rounded-2xl max-w-[90%] text-sm shadow-md leading-relaxed ${isUser ? 'bg-teal-600 text-white rounded-tr-sm' : 'bg-slate-800 border border-slate-700 text-slate-200 rounded-tl-sm'}`;
-            bub.innerHTML = html;
-            div.appendChild(bub);
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
+        // --- DOM HANDLERS ---
+        function fillInput(txt) { document.getElementById('user-input').value = txt; }
+        function toggleTools() { document.getElementById('tools-menu').classList.toggle('hidden'); }
+        function setPrefix(p) { const i = document.getElementById('user-input'); i.value = p; i.focus(); toggleTools(); }
+        function clearChat() { 
+            if(abortController) abortController.abort(); 
+            document.getElementById('chat-box').innerHTML = ''; 
+            addMessage("Memory wiped.", 'ai'); 
+            setProcessingState(false);
+        }
+        function setProcessingState(active) {
+            const btn = document.getElementById('send-btn');
+            const icon = document.getElementById('send-icon');
+            if(active) {
+                icon.className = 'fa-solid fa-stop';
+                btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600');
+                btn.classList.remove('bg-white', 'text-black', 'hover:bg-zinc-200');
+                btn.onclick = (e) => { e.preventDefault(); if(abortController) abortController.abort(); };
+            } else {
+                icon.className = 'fa-solid fa-arrow-up';
+                btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600');
+                btn.classList.add('bg-white', 'text-black', 'hover:bg-zinc-200');
+                btn.onclick = null;
+            }
+        }
+        function openFullscreen(src) {
+             const m = document.getElementById('fullscreen-modal');
+             const i = document.getElementById('fullscreen-img');
+             i.src = src; m.classList.remove('hidden');
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-modal').classList.add('hidden'); }
+        function copyToClipboard(btn, txt) {
+             const t = document.createElement('textarea'); t.value = decodeURIComponent(txt);
+             document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
         }
 
-        form.addEventListener('submit', async (e) => {
+        window.onclick = (e) => {
+            if(!e.target.closest('#tools-menu') && !e.target.closest('#tools-btn')) document.getElementById('tools-menu').classList.add('hidden');
+        };
+
+        document.getElementById('chat-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const text = input.value.trim();
-            if(!text) return;
-            addMessage(text, true);
-            input.value = '';
-            typing.classList.remove('hidden');
-            
-            const delay = 600 + Math.random() * 600;
-            
-            setTimeout(async () => {
-                try {
-                    const res = await handleInput(text);
-                    typing.classList.add('hidden');
-                    addMessage(res.html, false);
-                } catch(e) {
-                    typing.classList.add('hidden');
-                    addMessage("I lost my train of thought. Say again?", false);
-                }
-            }, delay);
+            const val = document.getElementById('user-input').value.trim();
+            if(!val) return;
+            addMessage(val, 'user');
+            document.getElementById('user-input').value = '';
+            processInput(val);
         });
 
+        // Initialize Message
+        setTimeout(() => {
+            document.querySelectorAll('.message-bubble').forEach(el => el.classList.remove('opacity-0'));
+        }, 100);
     </script>
 </body>
 </html>
