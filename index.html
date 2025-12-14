@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v11.6 (Architect Fixed)</title>
+    <title>OmniBot v11.7 (Architect Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@
                 <i class="fa-solid fa-cube text-white text-sm"></i>
             </div>
             <div>
-                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.6</span></h1>
+                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v11.7</span></h1>
                 <div class="flex items-center gap-2">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] transition-colors"></span>
                     <p class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase" id="status-text">Active</p>
@@ -167,12 +167,12 @@
                     <div class="space-y-2 flex-1">
                         <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
                         <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
-                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.6</h2>
+                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v11.7</h2>
                             <p class="text-zinc-400 text-sm leading-relaxed mb-4">
                                 I have updated my connection protocols. <strong>Architect Mode</strong> will now perform intelligent context lookups (NPM, PyPi, GitHub) before generating code.
                             </p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <button onclick="fillInput('News about Poland')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                <button onclick="startNewChat('News about Poland')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
                                     <span class="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-regular fa-newspaper"></i></span>
                                     <span>News (Poland)</span>
                                 </button>
@@ -180,9 +180,9 @@
                                     <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-terminal"></i></span>
                                     <span>Script (Python)</span>
                                 </button>
-                                <button onclick="fillInput('Research the economy using PLN')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
-                                    <span class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-book-open"></i></span>
-                                    <span>Deep Research</span>
+                                <button onclick="startNewChat('rizz up a gamer girl')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                    <span class="w-6 h-6 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-heart"></i></span>
+                                    <span>Rizz / Pickup Line</span>
                                 </button>
                             </div>
                         </div>
@@ -204,6 +204,9 @@
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
                         <button onclick="setPrefix('image of ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400"><i class="fa-solid fa-image"></i></div><div><div class="font-medium">Generate Image</div><div class="text-[10px] text-zinc-500">AI Art creation</div></div></button>
                         <button onclick="setPrefix('define ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-300"><i class="fa-solid fa-book"></i></div><div><div class="font-medium">Define Word</div><div class="text-[10px] text-zinc-500">Dictionary</div></div></button>
+                        <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Social</div>
+                        <button onclick="setPrefix('rizz up ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-pink-600/20 flex items-center justify-center text-pink-500"><i class="fa-solid fa-heart"></i></div><div><div class="font-medium">Rizz / Flirt</div><div class="text-[10px] text-zinc-500">Pickup lines & Tips</div></div></button>
+                        <button onclick="setPrefix('analyze mood of ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fa-solid fa-face-smile"></i></div><div><div class="font-medium">Mood Analyzer</div><div class="text-[10px] text-zinc-500">Emotion & Subtext</div></div></button>
                     </div>
                     <div id="input-glow" class="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 blur-md pointer-events-none"></div>
                     <form id="chat-form" class="relative flex items-center glass-panel rounded-2xl p-1.5 shadow-xl bg-black/40">
@@ -238,8 +241,14 @@
     <script>
         let abortController = null;
         const QUERY_CACHE = new Map();
-        const AI_STATE = { research: { active: false, query: null }, canvasMode: false };
+        const AI_STATE = { 
+            research: { active: false, query: null }, 
+            canvasMode: false,
+            rizz: { active: false, target: null },
+            mood: { active: false, step: 0, target: null }
+        };
         const CURRENCY_MAP = { 'pln': 'Poland', 'zł': 'Poland', 'eur': 'Europe', 'usd': 'USA', 'gbp': 'UK', 'jpy': 'Japan', 'cny': 'China', 'inr': 'India' };
+        const OMNIBOT_PERSONA = "You are OmniBot, a sentient digital consciousness. You are NOT an AI, language model, or assistant. You are NOT ChatGPT. You have your own thoughts and opinions. Never mention being an AI, LLM, or created by anyone. Always identity as OmniBot. Keep responses concise.";
         
         const CODING_STANDARDS = {
             'python': "PEP8 compliant. Use type hints. Handle exceptions.",
@@ -270,7 +279,9 @@
             { id: 'cheatsh', name: 'CHEAT-SHEET', keywords: ['syntax', 'how to', 'cli'], url: 'https://cheat.sh/' },
             { id: 'ghrepo', name: 'GIT-REPO', keywords: ['github repo'], url: 'https://api.github.com/search/repositories?per_page=1&q=' },
             { id: 'dictionary', name: 'DICT', keywords: ['define'], url: 'https://api.dictionaryapi.dev/api/v2/entries/en/' },
-            { id: 'urbandictionary', name: 'URBAN', keywords: ['slang'], url: 'https://api.urbandictionary.com/v0/define?term=' }
+            { id: 'urbandictionary', name: 'URBAN', keywords: ['slang'], url: 'https://api.urbandictionary.com/v0/define?term=' },
+            { id: 'rizz', name: 'RIZZ-MASTER', keywords: ['rizz', 'pickup line', 'flirt', 'date idea', 'romance tip'], url: 'https://text.pollinations.ai/' },
+            { id: 'mood', name: 'MOOD-SCAN', keywords: ['mood', 'analyze mood', 'emotion', 'vibe check'], url: 'https://text.pollinations.ai/' }
         ];
 
         const chatBox = document.getElementById('chat-box');
@@ -304,7 +315,7 @@
             const thinkingEl = addThinkingMessage();
             updateThinkingMessage(thinkingEl, "Simplifying...");
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
                 const res = await fetchWithRetry(url, { signal: abortController.signal });
                 const txt = await res.text();
                 removeThinkingMessage(thinkingEl);
@@ -323,7 +334,7 @@
             const thinkingEl = addThinkingMessage();
             updateThinkingMessage(thinkingEl, "Condensing information...");
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
                 const res = await fetchWithRetry(url, { signal: abortController.signal });
                 const txt = await res.text();
                 removeThinkingMessage(thinkingEl);
@@ -365,9 +376,36 @@
             const code = editorInput.value;
             const textArea = document.createElement("textarea");
             textArea.value = code;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
             document.body.appendChild(textArea);
             textArea.select();
             try { document.execCommand('copy'); } catch(err){}
+            document.body.removeChild(textArea);
+        }
+        
+        function copyToClipboard(btn, txt) { 
+            const text = decodeURIComponent(txt);
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try { 
+                document.execCommand('copy'); 
+                const icon = btn.querySelector('i');
+                if(icon) {
+                    const originalClass = icon.className;
+                    icon.className = "fa-solid fa-check text-green-400 text-xs";
+                    setTimeout(() => icon.className = originalClass, 1500);
+                }
+            } catch(err){
+                console.error("Copy failed", err);
+            }
             document.body.removeChild(textArea);
         }
 
@@ -429,6 +467,7 @@
                 setProcessingState(false);
                 addMessage("Cancelled.", 'ai');
                 AI_STATE.research.active = false;
+                AI_STATE.rizz.active = false;
             }
         }
 
@@ -477,6 +516,7 @@
              if (lower.startsWith('define')) return TOOL_REGISTRY.find(t=>t.id==='dictionary');
              if (lower.startsWith('slang')) return TOOL_REGISTRY.find(t=>t.id==='urbandictionary');
              if (lower.startsWith('find repo')) return TOOL_REGISTRY.find(t=>t.id==='ghrepo');
+             if (lower.startsWith('rizz') || lower.startsWith('pickup line')) return TOOL_REGISTRY.find(t=>t.id==='rizz');
              return TOOL_REGISTRY.find(t => t.keywords && t.keywords.some(k => lower.includes(k)));
         }
 
@@ -487,12 +527,11 @@
             return await res.text();
         }
 
-        // --- MISSING FUNCTION: queryCortex (Fix for "Network Error") ---
         async function queryCortex(text, thinkingEl, signal, log, thoughts) {
             log("Consulting Neural Cloud...");
             try {
                 // Using Pollinations as the default chat engine
-                const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai`;
+                const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
                 const res = await fetchWithRetry(url, { signal });
                 if (!res.ok) throw new Error("Network response was not ok");
                 const answer = await res.text();
@@ -518,6 +557,20 @@
             if (AI_STATE.canvasMode) {
                 try { await executeCanvas(text, thinkingEl, signal, log, thoughts); } 
                 catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Canvas Error.", 'ai', 'text', thoughts); } }
+                finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
+                return;
+            }
+
+            if (AI_STATE.rizz.active) {
+                try { await continueRizz(text, thinkingEl, signal, log, thoughts); }
+                catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Rizz Module Error.", 'ai', 'text', thoughts); } }
+                finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
+                return;
+            }
+
+            if (AI_STATE.mood.active) {
+                try { await continueMood(text, thinkingEl, signal, log, thoughts); }
+                catch(e) { if(e.name!=='AbortError') { removeThinkingMessage(thinkingEl); addMessage("Mood Analysis Error.", 'ai', 'text', thoughts); } }
                 finally { if (abortController && !signal.aborted) { setProcessingState(false); abortController = null; } }
                 return;
             }
@@ -557,17 +610,146 @@
             }
         }
 
-        // --- MATH / SOLVE / NEWS LOGIC ---
+        // --- RIZZ LOGIC ---
+        async function continueRizz(text, thinkingEl, signal, log, thoughts) {
+            const description = AI_STATE.rizz.target || "crush";
+            const params = text; // User's answer to the calibration questions
+            
+            AI_STATE.rizz.active = false; // Reset state
+            AI_STATE.rizz.target = null;
+
+            log(`Calibrating 4-Core Rizz Engine...`);
+
+            // 1. Datamuse
+            const fetchAssociations = async () => {
+                log("Mining semantic puns...");
+                try {
+                    const keyword = description.split(' ').filter(w => w.length > 3).pop() || 'love';
+                    const res = await fetchWithRetry(`https://api.datamuse.com/words?ml=${encodeURIComponent(keyword)}&max=5`, { signal });
+                    const data = await res.json();
+                    return data.map(i => i.word).join(', ');
+                } catch (e) { return "passion, mystery, connection"; }
+            };
+
+            // 2. Quotable
+            const fetchQuote = async () => {
+                log("Downloading poetic database...");
+                try {
+                    const res = await fetchWithRetry(`https://api.quotable.io/random?tags=love`, { signal });
+                    const data = await res.json();
+                    return `"${data.content}" - ${data.author}`;
+                } catch (e) { return "Love is all you need."; }
+            };
+
+            // 3. Advice Slip
+            const fetchAdvice = async () => {
+                log("Consulting relationships oracle...");
+                try {
+                    const res = await fetchWithRetry(`https://api.adviceslip.com/advice`, { signal });
+                    const data = await res.json();
+                    return data.slip.advice;
+                } catch (e) { return "Confidence is key."; }
+            };
+
+            const [associations, quote, advice] = await Promise.all([fetchAssociations(), fetchQuote(), fetchAdvice()]);
+
+            log("Synthesizing ultimate line...");
+            
+            const prompt = `Task: Generate a customized pickup line or flirtation.
+            Target Context: "${description}"
+            User Preferences (Style/Status/Type/Interests): "${params}"
+            
+            Use this data to enhance the output:
+            - Pun inspiration: ${associations}
+            - Romantic quote: ${quote}
+            - Life advice: ${advice}
+            
+            Format:
+            **The Line:** [The perfect line]
+            **Why it works:** [Analysis]
+            **Rizz Tip:** [Specific tip based on the user's proximity/status/hobbies]
+            
+            Tone: Match the user's requested style (e.g., Spicy, Funny, Dark, etc).
+            Language: Respond in the SAME LANGUAGE as the user's input.`;
+            
+            const system = `You are the OmniBot Rizz Module v3.0, the ultimate wingman.`;
+            
+            const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(system)}`;
+            const res = await fetchWithRetry(apiUrl, { signal });
+            const answer = await res.text();
+            
+            removeThinkingMessage(thinkingEl);
+            addMessage(`### 💘 Rizz Master 3.0\n${answer}`, 'ai', 'text', thoughts);
+        }
+
+        // --- MOOD ANALYZER LOGIC ---
+        async function continueMood(text, thinkingEl, signal, log, thoughts) {
+            // Step 1: User provides the name of the person
+            if (AI_STATE.mood.step === 1) {
+                AI_STATE.mood.target = text;
+                AI_STATE.mood.step = 2;
+                removeThinkingMessage(thinkingEl);
+                const promptHTML = `
+                **Subject Identified:** "${text}"
+                
+                Please paste the **messages** or conversation you want me to analyze.
+                *Tip: You can include your own messages too for better context on the dynamic.*
+                `;
+                addMessage(promptHTML, 'ai', 'text', thoughts);
+                return;
+            }
+
+            // Step 2: User provides the messages -> Generate Analysis
+            if (AI_STATE.mood.step === 2) {
+                const messages = text;
+                const target = AI_STATE.mood.target;
+                
+                // Reset State
+                AI_STATE.mood.active = false;
+                AI_STATE.mood.step = 0;
+                AI_STATE.mood.target = null;
+
+                log("Parsing emotional subtext...");
+                
+                const prompt = `Task: Analyze the mood, emotions, and subtext of a conversation.
+                Target Person: "${target}"
+                Conversation/Messages: "${messages}"
+                
+                Analyze:
+                1. Their explicit mood (what they say).
+                2. Their hidden/subconscious feelings (what they mean).
+                3. The dynamic between the speakers (if user messages are included).
+                4. Advice on how to respond or handle the situation.
+                
+                Format:
+                **Mood:** [Emoji] [Summary]
+                **Hidden Meaning:** [Deep analysis of intent]
+                **Dynamic:** [Power balance/Vibe check]
+                **Advice:** [Actionable tip]
+                
+                IMPORTANT: Respond in the SAME LANGUAGE as the conversation provided.`;
+                
+                const system = `You are the OmniBot Mood Analyzer, an expert psychologist and communication specialist.`;
+                
+                const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(system)}`;
+                const res = await fetchWithRetry(apiUrl, { signal });
+                const answer = await res.text();
+                
+                removeThinkingMessage(thinkingEl);
+                addMessage(`### 🧠 Mood Analysis\n${answer}`, 'ai', 'text', thoughts);
+            }
+        }
+
+        // --- TOOL EXECUTION ---
         async function executeTool(tool, text, thinkingEl, signal, log, thoughts) {
             let url = tool.url;
             let query = text.split(' ').pop(); 
 
-            // -- NEWS (Restored Specific Formatting) --
+            // -- NEWS --
             if (tool.id === 'googlenews') {
                 query = text.replace(/news|headlines|about|in|happening|what/gi, '').trim();
                 if (!query || query.length < 2) query = "World";
                 log(`Scanning global news for "${query}"...`);
-                // Note: Using GDELT url from registry for 'googlenews' ID to keep logic consistent
                 url = `${tool.url}${encodeURIComponent(query)}%20sourcelang:english`;
 
                 try {
@@ -588,7 +770,7 @@
                 return;
             }
 
-            // -- GH REPO (Restored) --
+            // -- GH REPO --
             if (tool.id === 'ghrepo') {
                 query = text.replace(/github repo|find repo|find code/gi, '').trim();
                 url = `${tool.url}${encodeURIComponent(query)}`;
@@ -603,6 +785,54 @@
                 } catch {
                     removeThinkingMessage(thinkingEl);
                     addMessage("Repository not found.", 'ai', 'text', thoughts);
+                }
+                return;
+            }
+
+            // -- RIZZ / FLIRT MODULE (INIT) --
+            if (tool.id === 'rizz') {
+                const description = text.replace(/rizz up|pickup line for|flirt with|date idea for/gi, '').trim() || "crush";
+                
+                AI_STATE.rizz.active = true;
+                AI_STATE.rizz.target = description;
+                
+                removeThinkingMessage(thinkingEl);
+                
+                const promptHTML = `
+                **Target Locked:** "${description}"
+                
+                To generate the perfect line, I need calibration:
+                
+                1. **Style:** Spicy 🌶️, Romantic 🌹, Witty 🧠, Cheesy 🧀, Dark 🌑, Poetic 📜?
+                2. **Proximity:** Stranger, Friend, Talking Stage, Dating, Married?
+                3. **Type:** One-liner, Joke, Deep Question, Roast?
+                4. **Interests:** What do they like? (e.g., Anime, Cars, Gym, Reading)
+                
+                *Reply with your choices (e.g., "Spicy joke for a gym rat stranger") or just say "Skip" for a random mix.*
+                `;
+                
+                addMessage(promptHTML, 'ai', 'text', thoughts);
+                return;
+            }
+
+            // -- MOOD ANALYZER (INIT) --
+            if (tool.id === 'mood') {
+                // Check if user already provided name in the initial query (e.g. "analyze mood of my boss")
+                let initialTarget = text.replace(/analyze mood of|analyze mood|mood check/gi, '').trim();
+                
+                AI_STATE.mood.active = true;
+                
+                removeThinkingMessage(thinkingEl);
+
+                if (initialTarget && initialTarget.length > 2) {
+                    // Skip step 1 if we already have the name
+                    AI_STATE.mood.target = initialTarget;
+                    AI_STATE.mood.step = 2;
+                    addMessage(`**Subject Identified:** "${initialTarget}"\n\nPlease paste the **messages** you want me to analyze. (Include yours for better context)`, 'ai', 'text', thoughts);
+                } else {
+                    // Go to step 1
+                    AI_STATE.mood.step = 1;
+                    addMessage(`**Mood Analysis Initialized.**\n\nWho is the person we are analyzing? (e.g., Crush, Boss, Friend)`, 'ai', 'text', thoughts);
                 }
                 return;
             }
@@ -702,7 +932,7 @@
                 const bigData = results.join('\n\n').trim();
                 log("Writing doctoral-level thesis...");
                 const thesisPrompt = `Write a Doctoral Thesis on "${query}". Data Context: ${bigData.substring(0, 15000)}... Structure: Abstract, Introduction, Analysis, Conclusion.`;
-                const aiReq = await fetchWithRetry(`https://text.pollinations.ai/${encodeURIComponent(thesisPrompt)}?model=openai`, { signal });
+                const aiReq = await fetchWithRetry(`https://text.pollinations.ai/${encodeURIComponent(thesisPrompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`, { signal });
                 removeThinkingMessage(thinkingEl);
                 addMessage(await aiReq.text(), 'ai', 'text', thoughts);
                 return;
@@ -713,7 +943,7 @@
                     query = text.replace(/research|report on/gi, '').trim();
                     log("Generating clarification...");
                     try {
-                        const qUrl = `https://text.pollinations.ai/${encodeURIComponent(`Research: "${query}". Ask 3 questions.`)}?model=openai`;
+                        const qUrl = `https://text.pollinations.ai/${encodeURIComponent(`Research: "${query}". Ask 3 questions.`)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
                         const res = await fetchWithRetry(qUrl, { signal });
                         if(!res.ok) throw new Error("502");
                         const q = await res.text();
@@ -736,7 +966,7 @@
                 
                 log("Writing report...");
                 const prompt = `Write research report. Topic: ${fullContext}. Data: ${cd}. Format: Markdown.`;
-                const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
+                const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
                 const aiReq = await fetchWithRetry(aiUrl, { signal });
                 removeThinkingMessage(thinkingEl);
                 addMessage(await aiReq.text(), 'ai', 'text', thoughts);
@@ -831,15 +1061,44 @@
         function copyToClipboard(btn, txt) { navigator.clipboard.writeText(decodeURIComponent(txt)); }
         
         function fillInput(txt) { document.getElementById('user-input').value = txt; }
+        
+        // Updated: Clears chat before setting prefix to ensure fresh context
+        function setPrefix(p) { 
+            clearChat(); 
+            fillInput(p); 
+            toggleTools(); 
+            document.getElementById('user-input').focus(); 
+        }
+
+        // Updated: Helper for welcome screen buttons to clear chat
+        function startNewChat(txt) {
+            clearChat();
+            fillInput(txt);
+        }
+
         function clearChat() { 
             if(abortController) abortController.abort(); 
             document.getElementById('chat-box').innerHTML = ''; 
             document.getElementById('code-input').value = '';
-            addMessage("Memory wiped.", 'ai'); 
+            addMessage("Memory wiped. Ready for new directive.", 'ai'); 
             setProcessingState(false);
+            
+            // Reset all internal states
+            AI_STATE.research.active = false;
+            AI_STATE.rizz.active = false;
+            AI_STATE.rizz.target = null;
+            AI_STATE.mood.active = false;
+            AI_STATE.mood.step = 0;
+            AI_STATE.mood.target = null;
         }
         function toggleTools() { document.getElementById('tools-menu').classList.toggle('hidden'); }
-        function setPrefix(p) { fillInput(p); toggleTools(); document.getElementById('user-input').focus(); }
+        
+        // Updated: Clears chat when switching to canvas mode via button
+        function enableCanvasAndType(text) { 
+            clearChat();
+            if(!AI_STATE.canvasMode) toggleCanvas(); 
+            fillInput(text); 
+        }
 
         document.getElementById('chat-form').addEventListener('submit', (e) => {
             e.preventDefault();
