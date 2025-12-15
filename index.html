@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v12.13 (Leviathan Velocity Pro)</title>
+    <title>OmniBot v12.13 (Leviathan Velocity Code Pro)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1326,7 +1326,21 @@
         }
 
         function clearChat() { 
+            // 1. Cancel ongoing generation immediately
+            if (abortController) {
+                abortController.abort();
+                abortController = null;
+            }
+            
+            // 2. Close Code Editor (Canvas) if it is currently open
+            if (AI_STATE.canvasMode) {
+                toggleCanvas();
+            }
+
+            // 3. Reset internal states
             resetToolStates();
+
+            // 4. Wipe UI
             document.getElementById('chat-box').innerHTML = ''; 
             document.getElementById('code-input').value = '';
             addMessage("Memory wiped. Ready for new directive.", 'ai'); 
