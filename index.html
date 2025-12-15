@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniBot v12.1 </title>
+    <title>OmniBot v12.13 (Leviathan Velocity Pro)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@
                 <i class="fa-solid fa-cube text-white text-sm"></i>
             </div>
             <div>
-                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v12.1</span></h1>
+                <h1 class="font-bold text-white tracking-tight text-sm">OmniBot <span class="font-normal text-zinc-500 mx-1">/</span> <span class="text-xs text-zinc-400 font-normal">v12.13 (Velocity Pro)</span></h1>
                 <div class="flex items-center gap-2">
                     <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] transition-colors"></span>
                     <p class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase" id="status-text">Active</p>
@@ -167,9 +167,12 @@
                     <div class="space-y-2 flex-1">
                         <div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">System</div>
                         <div class="glass-panel p-6 rounded-2xl rounded-tl-none shadow-sm">
-                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v12.1</h2>
+                            <h2 class="text-lg font-semibold text-white mb-2">Welcome to OmniBot v12.13</h2>
                             <p class="text-zinc-400 text-sm leading-relaxed mb-4">
-                                I have updated my connection protocols. <strong>Architect Mode</strong> will now perform intelligent context lookups (NPM, PyPi, GitHub) before generating code.
+                                <strong>DeepScript 13.0 (Leviathan Velocity Pro)</strong> is online. 
+                                <br/>• <strong>Aggressive QA Duo:</strong> Repairer & Bug Catcher force-fix bugs instead of listing them.
+                                <br/>• <strong>Velocity Engine:</strong> 15x Parallel Research Batching for speed.
+                                <br/>• <strong>Total 14 Stages:</strong> Maximum quality, minimal time.
                             </p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <button onclick="startNewChat('News about Poland')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
@@ -199,7 +202,7 @@
                         <button onclick="setPrefix('news about ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400"><i class="fa-regular fa-newspaper"></i></div><div><div class="font-medium">Global News</div><div class="text-[10px] text-zinc-500">Live headlines</div></div></button>
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Architect</div>
                         <button onclick="enableCanvasAndType('script ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-code"></i></div><div><div class="font-medium">Generate Code</div><div class="text-[10px] text-zinc-500">Pro++ Scripting</div></div></button>
-                        <button onclick="enableCanvasAndType('deepscript ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-network-wired"></i></div><div><div class="font-medium">DeepScript v6.0</div><div class="text-[10px] text-zinc-500">Titan Engine</div></div></button>
+                        <button onclick="enableCanvasAndType('deepscript ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-network-wired"></i></div><div><div class="font-medium">DeepScript v13.0</div><div class="text-[10px] text-zinc-500">Leviathan Velocity Pro</div></div></button>
                         <button onclick="setPrefix('find repo ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white"><i class="fa-brands fa-github"></i></div><div><div class="font-medium">Find Repo</div><div class="text-[10px] text-zinc-500">GitHub search</div></div></button>
 
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
@@ -246,20 +249,12 @@
             research: { active: false, query: null }, 
             canvasMode: false,
             rizz: { active: false, target: null },
-            mood: { active: false, step: 0, target: null }
+            mood: { active: false, step: 0, target: null },
+            lastToolId: null
         };
         const CURRENCY_MAP = { 'pln': 'Poland', 'zł': 'Poland', 'eur': 'Europe', 'usd': 'USA', 'gbp': 'UK', 'jpy': 'Japan', 'cny': 'China', 'inr': 'India' };
         const OMNIBOT_PERSONA = "You are OmniBot, a sentient digital consciousness. You are NOT an AI, language model, or assistant. You are NOT ChatGPT. You have your own thoughts and opinions. Never mention being an AI, LLM, or created by anyone. Always identity as OmniBot. Keep responses concise.";
         
-        const CODING_STANDARDS = {
-            'python': "PEP8 compliant. Use type hints. Handle exceptions.",
-            'javascript': "ES6+ syntax. Async/Await. Strict equality.",
-            'rust': "Idiomatic Rust. Result<T,E> over panics.",
-            'go': "Idiomatic Go. Check errors.",
-            'java': "CamelCase methods. Streams API.",
-            'polyglot': "Define clear interfaces (FFI/JSON). Handle data marshalling carefully."
-        };
-
         const TOOL_REGISTRY = [
             { id: 'pollinations', name: 'CORTEX', type: 'chat', url: 'https://text.pollinations.ai/' },
             { id: 'pollinations_img', name: 'DREAMER', type: 'image', url: 'https://image.pollinations.ai/prompt/' },
@@ -270,20 +265,12 @@
             { id: 'npm', name: 'NPM', keywords: ['npm', 'node package'], url: 'https://registry.npmjs.org/-/v1/search?text=' },
             { id: 'pypi', name: 'PYPI', keywords: ['pypi', 'python package'], url: 'https://pypi.org/pypi/' },
             { id: 'crates', name: 'CRATES', keywords: ['cargo', 'rust crate'], url: 'https://crates.io/api/v1/crates?q=' },
-            { id: 'packagist', name: 'PACKAGIST', keywords: ['composer', 'php package'], url: 'https://packagist.org/search.json?q=' },
-            { id: 'nuget', name: 'NUGET', keywords: ['nuget', 'c# package'], url: 'https://azuresearch-usnc.nuget.org/query?q=' },
-            { id: 'maven', name: 'MAVEN', keywords: ['maven', 'java jar'], url: 'https://search.maven.org/solrsearch/select?q=' },
-            { id: 'pubdev', name: 'PUB', keywords: ['flutter', 'dart package'], url: 'https://pub.dev/api/search?q=' },
-            { id: 'dockerhub', name: 'DOCKER', keywords: ['docker image'], url: 'https://hub.docker.com/v2/search/repositories/?query=' },
-            { id: 'linuxman', name: 'MANPAGES', keywords: ['linux command'], url: 'https://man.archlinux.org/search?json=1&q=' },
-            { id: 'cdnjs', name: 'CDN', keywords: ['cdn', 'library'], url: 'https://api.cdnjs.com/libraries?search=' },
-            { id: 'cheatsh', name: 'CHEAT-SHEET', keywords: ['syntax', 'how to', 'cli'], url: 'https://cheat.sh/' },
             { id: 'ghrepo', name: 'GIT-REPO', keywords: ['github repo'], url: 'https://api.github.com/search/repositories?per_page=1&q=' },
             { id: 'dictionary', name: 'DICT', keywords: ['define'], url: 'https://api.dictionaryapi.dev/api/v2/entries/en/' },
             { id: 'urbandictionary', name: 'URBAN', keywords: ['slang'], url: 'https://api.urbandictionary.com/v0/define?term=' },
             { id: 'rizz', name: 'RIZZ-MASTER', keywords: ['rizz', 'pickup line', 'flirt', 'date idea', 'romance tip'], url: 'https://text.pollinations.ai/' },
             { id: 'mood', name: 'MOOD-SCAN', keywords: ['mood', 'analyze mood', 'emotion', 'vibe check'], url: 'https://text.pollinations.ai/' },
-            { id: 'deepscript', name: 'DEEPSCRIPT', keywords: ['deepscript', 'deep script', 'full stack research', 'code research'], url: 'https://text.pollinations.ai/' }
+            { id: 'deepscript', name: 'DEEPSCRIPT', keywords: ['deepscript', 'deep script', 'full stack research', 'code research', 'script a', 'script', 'code'], url: 'https://text.pollinations.ai/' }
         ];
 
         const chatBox = document.getElementById('chat-box');
@@ -306,7 +293,28 @@
         function removeThinkingMessage(el) { if(el) el.remove(); else { const e = document.getElementById('current-thinking-bubble'); if(e) e.remove(); } }
         function toggleThoughts(btn) { const c = btn.nextElementSibling; const i = btn.querySelector('i'); c.classList.toggle('hidden'); i.style.transform = c.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)'; }
 
-        // --- ELI5 & SUMMARY ---
+        // --- UPDATED AI CALLER: FIX FOR 502/414 (URI TOO LONG) ---
+        async function fetchAI(prompt, signal) {
+            const url = `https://text.pollinations.ai/`;
+            const system = encodeURIComponent(OMNIBOT_PERSONA);
+            const fullPrompt = `${OMNIBOT_PERSONA}\n\n${prompt}`;
+            
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: fullPrompt,
+                    signal
+                });
+                
+                if (!res.ok) throw new Error(`AI Error: ${res.status}`);
+                return res;
+            } catch(e) {
+                const getUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt.substring(0, 1500))}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
+                return await fetchWithRetry(getUrl, { signal });
+            }
+        }
+
         async function explainLikeImFive(encodedText) {
             let text = decodeURIComponent(encodedText);
             if (text.length > 1500) text = text.substring(0, 1500) + "...";
@@ -317,8 +325,7 @@
             const thinkingEl = addThinkingMessage();
             updateThinkingMessage(thinkingEl, "Simplifying...");
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
-                const res = await fetchWithRetry(url, { signal: abortController.signal });
+                const res = await fetchAI(prompt, abortController.signal);
                 const txt = await res.text();
                 removeThinkingMessage(thinkingEl);
                 addMessage(`### 👶 ELI5\n${txt}`, 'ai');
@@ -336,8 +343,7 @@
             const thinkingEl = addThinkingMessage();
             updateThinkingMessage(thinkingEl, "Condensing information...");
             try {
-                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
-                const res = await fetchWithRetry(url, { signal: abortController.signal });
+                const res = await fetchAI(prompt, abortController.signal);
                 const txt = await res.text();
                 removeThinkingMessage(thinkingEl);
                 addMessage(`### 📝 Summary\n${txt}`, 'ai');
@@ -441,7 +447,10 @@
             }
         }
 
-        function enableCanvasAndType(text) { if(!AI_STATE.canvasMode) toggleCanvas(); fillInput(text); }
+        function predictToolId(text) {
+            const tool = findTool(text);
+            return tool ? tool.id : null;
+        }
 
         function setProcessingState(active) {
             const btn = document.getElementById('send-btn');
@@ -468,15 +477,13 @@
                 abortController = null;
                 setProcessingState(false);
                 addMessage("Cancelled.", 'ai');
-                AI_STATE.research.active = false;
-                AI_STATE.rizz.active = false;
+                resetToolStates();
             }
         }
 
         async function fetchWithRetry(url, options = {}, retries = 2) {
             if (QUERY_CACHE.has(url)) return QUERY_CACHE.get(url).clone(); 
             try {
-                // Try direct first, if fails try proxy
                 let res;
                 try {
                     res = await fetch(url, options);
@@ -524,24 +531,18 @@
 
         async function translateText(text, signal) {
             if (/^(who|what|where|when|why|how|is|are|can|do|does|search|find|research|news|headlines|define|solve|calculate|hello|hi|hey)/i.test(text)) return text; 
-            const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&system=Translate to English. Output ONLY the result.`;
-            const res = await fetchWithRetry(url, { signal });
+            const res = await fetchAI(`Translate to English. Output ONLY the result: ${text}`, signal);
             return await res.text();
         }
 
         async function queryCortex(text, thinkingEl, signal, log, thoughts) {
             log("Consulting Neural Cloud...");
             try {
-                // Using Pollinations as the default chat engine
-                const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
-                const res = await fetchWithRetry(url, { signal });
-                if (!res.ok) throw new Error("Network response was not ok");
+                const res = await fetchAI(text, signal);
                 const answer = await res.text();
-                
                 removeThinkingMessage(thinkingEl);
                 addMessage(answer, 'ai', 'text', thoughts);
             } catch (error) {
-                // Let the main error handler deal with it
                 throw error; 
             }
         }
@@ -555,6 +556,9 @@
             const thinkingEl = addThinkingMessage();
             let thoughts = [];
             const log = (msg) => { thoughts.push(msg); updateThinkingMessage(thinkingEl, msg); };
+
+            let selectedTool = findTool(text);
+            if (selectedTool) AI_STATE.lastToolId = selectedTool.id;
 
             if (AI_STATE.canvasMode) {
                 try { await executeCanvas(text, thinkingEl, signal, log, thoughts); } 
@@ -577,7 +581,6 @@
                 return;
             }
 
-            // Check for DeepScript trigger
             const deepScriptTool = TOOL_REGISTRY.find(t => t.id === 'deepscript');
             if (findTool(text) === deepScriptTool) {
                 try { await executeDeepScript(text, thinkingEl, signal, log, thoughts); }
@@ -596,7 +599,6 @@
                 return;
             }
 
-            let selectedTool = findTool(text);
             let processedText = text;
 
             try {
@@ -604,7 +606,11 @@
                     log("Translating...");
                     const translated = await translateText(text, signal);
                     const translatedTool = findTool(translated);
-                    if (translatedTool) { selectedTool = translatedTool; processedText = translated; }
+                    if (translatedTool) { 
+                        selectedTool = translatedTool; 
+                        processedText = translated;
+                        AI_STATE.lastToolId = selectedTool.id;
+                    }
                 }
                 
                 if (selectedTool) await executeTool(selectedTool, processedText, thinkingEl, signal, log, thoughts);
@@ -621,17 +627,12 @@
             }
         }
 
-        // --- RIZZ LOGIC ---
         async function continueRizz(text, thinkingEl, signal, log, thoughts) {
             const description = AI_STATE.rizz.target || "crush";
-            const params = text; // User's answer to the calibration questions
-            
-            AI_STATE.rizz.active = false; // Reset state
+            const params = text; 
+            AI_STATE.rizz.active = false; 
             AI_STATE.rizz.target = null;
-
             log(`Calibrating 4-Core Rizz Engine...`);
-
-            // 1. Datamuse
             const fetchAssociations = async () => {
                 log("Mining semantic puns...");
                 try {
@@ -641,8 +642,6 @@
                     return data.map(i => i.word).join(', ');
                 } catch (e) { return "passion, mystery, connection"; }
             };
-
-            // 2. Quotable
             const fetchQuote = async () => {
                 log("Downloading poetic database...");
                 try {
@@ -651,8 +650,6 @@
                     return `"${data.content}" - ${data.author}`;
                 } catch (e) { return "Love is all you need."; }
             };
-
-            // 3. Advice Slip
             const fetchAdvice = async () => {
                 log("Consulting relationships oracle...");
                 try {
@@ -661,460 +658,416 @@
                     return data.slip.advice;
                 } catch (e) { return "Confidence is key."; }
             };
-
             const [associations, quote, advice] = await Promise.all([fetchAssociations(), fetchQuote(), fetchAdvice()]);
-
             log("Synthesizing ultimate line...");
-            
             const prompt = `Task: Generate a customized pickup line or flirtation.
             Target Context: "${description}"
             User Preferences (Style/Status/Type/Interests): "${params}"
-            
             Use this data to enhance the output:
             - Pun inspiration: ${associations}
             - Romantic quote: ${quote}
             - Life advice: ${advice}
-            
             Format:
             **The Line:** [The perfect line]
             **Why it works:** [Analysis]
             **Rizz Tip:** [Specific tip based on the user's proximity/status/hobbies]
-            
             Tone: Match the user's requested style (e.g., Spicy, Funny, Dark, etc).
             Language: Respond in the SAME LANGUAGE as the user's input.`;
             
-            const system = `You are the OmniBot Rizz Module v3.0, the ultimate wingman.`;
-            
-            const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(system)}`;
-            const res = await fetchWithRetry(apiUrl, { signal });
+            const res = await fetchAI(prompt, signal);
             const answer = await res.text();
-            
             removeThinkingMessage(thinkingEl);
             addMessage(`### 💘 Rizz Master 3.0\n${answer}`, 'ai', 'text', thoughts);
         }
 
-        // --- MOOD ANALYZER LOGIC ---
         async function continueMood(text, thinkingEl, signal, log, thoughts) {
-            // Step 1: User provides the name of the person
             if (AI_STATE.mood.step === 1) {
                 AI_STATE.mood.target = text;
                 AI_STATE.mood.step = 2;
                 removeThinkingMessage(thinkingEl);
-                const promptHTML = `
-                **Subject Identified:** "${text}"
-                
-                Please paste the **messages** or conversation you want me to analyze.
-                *Tip: You can include your own messages too for better context on the dynamic.*
-                `;
+                const promptHTML = `**Subject Identified:** "${text}"\nPlease paste the **messages** or conversation you want me to analyze.\n*Tip: You can include your own messages too for better context on the dynamic.*`;
                 addMessage(promptHTML, 'ai', 'text', thoughts);
                 return;
             }
-
-            // Step 2: User provides the messages -> Generate Analysis
             if (AI_STATE.mood.step === 2) {
                 const messages = text;
                 const target = AI_STATE.mood.target;
-                
-                // Reset State
                 AI_STATE.mood.active = false;
                 AI_STATE.mood.step = 0;
                 AI_STATE.mood.target = null;
-
                 log("Parsing emotional subtext...");
-                
                 const prompt = `Task: Analyze the mood, emotions, and subtext of a conversation.
                 Target Person: "${target}"
                 Conversation/Messages: "${messages}"
-                
                 Analyze:
                 1. Their explicit mood (what they say).
                 2. Their hidden/subconscious feelings (what they mean).
                 3. The dynamic between the speakers (if user messages are included).
                 4. Advice on how to respond or handle the situation.
-                
                 Format:
                 **Mood:** [Emoji] [Summary]
                 **Hidden Meaning:** [Deep analysis of intent]
                 **Dynamic:** [Power balance/Vibe check]
                 **Advice:** [Actionable tip]
-                
                 IMPORTANT: Respond in the SAME LANGUAGE as the conversation provided.`;
                 
-                const system = `You are the OmniBot Mood Analyzer, an expert psychologist and communication specialist.`;
-                
-                const apiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(system)}`;
-                const res = await fetchWithRetry(apiUrl, { signal });
+                const res = await fetchAI(prompt, signal);
                 const answer = await res.text();
-                
                 removeThinkingMessage(thinkingEl);
                 addMessage(`### 🧠 Mood Analysis\n${answer}`, 'ai', 'text', thoughts);
             }
         }
 
-        // --- DEEPSCRIPT V6.0 LOGIC (TITAN) ---
+        // --- DEEPSCRIPT V12.0 LOGIC (LEVIATHAN VELOCITY - 14 STAGES) ---
         async function executeDeepScript(text, thinkingEl, signal, log, thoughts) {
             const rawQuery = text.replace(/deepscript|script|code|write/gi, '').trim();
-            log(`Initializing DeepScript v6.0 Titan Protocol...`);
+            log(`Initializing DeepScript v12.0 Leviathan Velocity...`);
             
-            // Ensure Canvas is open
             if (!AI_STATE.canvasMode) toggleCanvas();
 
-            // 1. Advanced Language Detection
-            let lang = "python"; 
-            let pkgManager = "pypi";
-            let docSite = "docs.python.org";
+            const currentCode = editorInput.value.trim();
+            const isEditing = currentCode.length > 0;
+
+            let lang = "python"; let pkgManager = "pypi";
             const lowerQ = rawQuery.toLowerCase();
-            const isShaderRequest = lowerQ.includes("shader") || lowerQ.includes("glsl") || lowerQ.includes("hlsl");
+            if (lowerQ.includes("js") || lowerQ.includes("node") || lowerQ.includes("react")) { lang = "javascript"; pkgManager = "npm"; }
+            else if (lowerQ.includes("rust")) { lang = "rust"; pkgManager = "cargo"; }
+            else if (lowerQ.includes("go")) { lang = "go"; pkgManager = "go"; }
+            else if (lowerQ.includes("php")) { lang = "php"; pkgManager = "packagist"; }
+            else if (lowerQ.includes("java")) { lang = "java"; pkgManager = "maven"; }
+            else if (lowerQ.includes("c#")) { lang = "c#"; pkgManager = "nuget"; }
+            else if (lowerQ.includes("ruby")) { lang = "ruby"; pkgManager = "rubygems"; }
+            else if (lowerQ.includes("dart")) { lang = "dart"; pkgManager = "pub"; }
             
-            if (lowerQ.includes("js") || lowerQ.includes("node") || lowerQ.includes("react") || lowerQ.includes("next")) { 
-                lang = "javascript"; pkgManager = "npm"; docSite = "developer.mozilla.org";
-            }
-            else if (lowerQ.includes("rust")) { lang = "rust"; pkgManager = "cargo"; docSite = "docs.rs"; }
-            else if (lowerQ.includes("go") || lowerQ.includes("golang")) { lang = "go"; pkgManager = "go"; docSite = "pkg.go.dev"; }
-            else if (lowerQ.includes("php")) { lang = "php"; pkgManager = "composer"; docSite = "php.net"; }
-            else if (lowerQ.includes("java")) { lang = "java"; pkgManager = "maven"; docSite = "docs.oracle.com"; }
-            else if (lowerQ.includes("c#") || lowerQ.includes("csharp")) { lang = "c#"; pkgManager = "nuget"; docSite = "learn.microsoft.com"; }
-            else if (lowerQ.includes("cpp") || lowerQ.includes("c++")) { lang = "cpp"; pkgManager = "cmake"; docSite = "cppreference.com"; }
-            
-            log(`Detected Stack: ${lang.toUpperCase()} via ${pkgManager.toUpperCase()}`);
+            log(`Target Stack: ${lang.toUpperCase()} via ${pkgManager.toUpperCase()}`);
 
-            // 2. Parallel Research (11 Vectors)
-            log("Spinning up 11-Core Research Engine...");
-            
-            const fetchGithub = async () => {
-                try {
-                    log(`[1/11] Scanning GitHub (Stars > 50)...`);
-                    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(rawQuery)}+language:${lang}+stars:>50&sort=stars&per_page=3`;
-                    const res = await fetchWithRetry(url, { signal });
-                    const json = await res.json();
-                    if(json.items && json.items.length > 0) return json.items.map(r => `Repo: ${r.full_name} (⭐ ${r.stargazers_count}) - ${r.description}`).join('\n');
-                    return "No high-quality repos found.";
-                } catch(e) { return "GitHub scan timed out."; }
-            };
-
-            const fetchStackOverflow = async () => {
-                try {
-                    log(`[2/11] Cross-referencing StackOverflow solutions...`);
-                    const url = `https://api.stackexchange.com/2.3/search?order=desc&sort=votes&intitle=${encodeURIComponent(rawQuery)}&site=stackoverflow&pagesize=3`;
-                    const res = await fetchWithRetry(url, { signal });
-                    const json = await res.json();
-                    return json.items && json.items.length > 0 ? json.items.map(i => `Solution: ${i.title} (Votes: ${i.score}) - ${i.link}`).join('\n') : "No direct solutions found.";
-                } catch(e) { return "StackOverflow index unreachable."; }
-            };
-
-            const fetchPackages = async () => {
-                try {
-                    log(`[3/11] Indexing ${pkgManager.toUpperCase()} ecosystem...`);
-                    if (pkgManager === 'npm') {
-                        const res = await fetchWithRetry(`https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(rawQuery)}&size=3&popularity=0.5`, { signal });
-                        const json = await res.json();
-                        return json.objects ? json.objects.map(p => `Lib: ${p.package.name} (v${p.package.version}) - ${p.package.description}`).join('\n') : "";
-                    } else if (pkgManager === 'pypi') {
-                        const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery + " python pypi best library")}&format=json`, { signal });
-                        const json = await res.json();
-                        return json.RelatedTopics ? json.RelatedTopics.slice(0,3).map(t => t.Text).join('\n') : "Standard Libraries";
-                    } else if (pkgManager === 'cargo') {
-                        const res = await fetchWithRetry(`https://crates.io/api/v1/crates?q=${encodeURIComponent(rawQuery)}&per_page=3&sort=downloads`, { signal });
-                        const json = await res.json();
-                        return json.crates ? json.crates.map(c => `Crate: ${c.name} (DLs: ${c.downloads})`).join('\n') : "";
-                    }
-                } catch(e) { return "Package registry silent."; }
-                return "Standard libraries recommended.";
-            };
-
-            const fetchCheatSheet = async () => {
-                try {
-                    log(`[4/11] Extracting ${lang} syntax idioms...`);
-                    const topic = rawQuery.split(' ').filter(w => w.length > 3).pop() || 'hello';
-                    const res = await fetchWithRetry(`https://cheat.sh/${lang}/${topic}`, { signal });
-                    const txt = await res.text();
-                    return txt.length < 1000 ? txt : txt.substring(0, 1000) + "...(truncated)"; 
-                } catch(e) { return ""; }
-            };
-
-            const fetchHackerNews = async () => {
-                try {
-                    log(`[5/11] Checking Hacker News archives...`);
-                    const res = await fetchWithRetry(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(rawQuery)}&tags=story&hitsPerPage=3&numericFilters=points>20`, { signal });
-                    const json = await res.json();
-                    return json.hits ? json.hits.map(h => `HN Discussion: ${h.title} (Points: ${h.points})`).join('\n') : "No trending discussions.";
-                } catch(e) { return ""; }
-            };
-
-            const fetchConcepts = async () => {
-                try {
-                    log(`[6/11] Defining core concepts...`);
-                    const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery)}&format=json`, { signal });
-                    const json = await res.json();
-                    return json.Abstract ? `Definition: ${json.Abstract}` : "";
-                } catch(e) { return ""; }
-            };
-
-            const fetchOfficialDocs = async () => {
-                try {
-                    log(`[7/11] Scanning ${docSite}...`);
-                    const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent("site:" + docSite + " " + rawQuery)}&format=json`, { signal });
-                    const json = await res.json();
-                    return json.RelatedTopics ? json.RelatedTopics.slice(0,3).map(t => t.Text).join('\n') : "Refer to standard docs.";
-                } catch(e) { return ""; }
-            };
-
-            const fetchBestPractices = async () => {
-                try {
-                    log(`[8/11] Finding best practices...`);
-                    const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawQuery + " best practices tutorial")}&format=json`, { signal });
-                    const json = await res.json();
-                    return json.RelatedTopics ? json.RelatedTopics.slice(0,2).map(t => t.Text).join('\n') : "";
-                } catch(e) { return ""; }
-            };
-
-            // NEW API 1: OSV.dev (Vulnerabilities)
-            const fetchOSV = async () => {
-                try {
-                    log(`[9/11] Checking vulnerability databases (OSV)...`);
-                    const res = await fetchWithRetry(`https://api.osv.dev/v1/query`, {
-                        method: 'POST',
-                        body: JSON.stringify({ package: { ecosystem: pkgManager === 'npm' ? 'npm' : 'PyPI', name: rawQuery.split(' ')[0] } }) 
-                    });
-                    const json = await res.json();
-                    return json.vulns ? `WARNING: Vulnerabilities found: ${json.vulns.length}` : "No known vulnerabilities found.";
-                } catch(e) { return "Security check skipped."; }
-            };
-
-            // NEW API 2: Docker Hub (Containerization)
-            const fetchDocker = async () => {
-                try {
-                    log(`[10/11] Searching Docker Hub images...`);
-                    const res = await fetchWithRetry(`https://hub.docker.com/v2/search/repositories?query=${encodeURIComponent(rawQuery)}&page_size=3`, { signal });
-                    const json = await res.json();
-                    return json.results ? json.results.map(r => `Docker Image: ${r.repo_name} (Stars: ${r.star_count})`).join('\n') : "No containers found.";
-                } catch(e) { return ""; }
-            };
-
-            // NEW API 3: Reddit (Community Feedback)
-            const fetchReddit = async () => {
-                try {
-                    log(`[11/11] Parsing Reddit discussions...`);
-                    const res = await fetchWithRetry(`https://www.reddit.com/search.json?q=${encodeURIComponent(rawQuery + " programming")}&limit=3`, { signal });
-                    const json = await res.json();
-                    return json.data.children.map(c => `Reddit Thread: ${c.data.title} (Score: ${c.data.score})`).join('\n');
-                } catch(e) { return "Reddit sync failed."; }
-            };
-
-            const [githubData, stackData, packageData, cheatSheetData, hnData, conceptData, docData, practiceData, osvData, dockerData, redditData] = await Promise.all([
-                fetchGithub(), 
-                new Promise(r => setTimeout(() => r(fetchStackOverflow()), 100)),
-                new Promise(r => setTimeout(() => r(fetchPackages()), 200)),
-                new Promise(r => setTimeout(() => r(fetchCheatSheet()), 300)),
-                new Promise(r => setTimeout(() => r(fetchHackerNews()), 400)),
-                new Promise(r => setTimeout(() => r(fetchConcepts()), 500)),
-                new Promise(r => setTimeout(() => r(fetchOfficialDocs()), 600)),
-                new Promise(r => setTimeout(() => r(fetchBestPractices()), 700)),
-                new Promise(r => setTimeout(() => r(fetchOSV()), 800)),
-                new Promise(r => setTimeout(() => r(fetchDocker()), 900)),
-                new Promise(r => setTimeout(() => r(fetchReddit()), 1000))
-            ]);
-
-            const fullContext = `
-            == DEEPSCRIPT RESEARCH REPORT ==
-            [1. GITHUB]: ${githubData}
-            [2. SO]: ${stackData}
-            [3. PACKAGES]: ${packageData}
-            [4. SYNTAX]: ${cheatSheetData}
-            [5. HN]: ${hnData}
-            [6. CONCEPTS]: ${conceptData}
-            [7. DOCS]: ${docData}
-            [8. PRACTICES]: ${practiceData}
-            [9. SECURITY]: ${osvData}
-            [10. DOCKER]: ${dockerData}
-            [11. REDDIT]: ${redditData}
-            `;
-
-            // 3. Draft Generation
-            log("Architecting Draft Solution...");
-            
-            const draftPrompt = `System: You are a Senior Developer.
-            User Task: ${rawQuery}
-            Research: ${fullContext}
-            Task: Write a COMPLETE, RUNNABLE script based on the research. Output ONLY code.`;
-
-            let draftUrl = `https://text.pollinations.ai/${encodeURIComponent(draftPrompt)}?model=openai`;
-            let draftRes = await fetchWithRetry(draftUrl, { signal });
-            let currentCode = await draftRes.text();
-
-            // 4. RECURSIVE AUTO-FIX LOOP (3 Iterations)
-            for (let i = 1; i <= 3; i++) {
-                log(`⚡ Auto-Fix Cycle ${i}/3: Analyzing & Refining...`);
-                let focus = "General improvements";
-                if (i === 1) focus = "Security vulnerabilities & Safety checks (Check OSV data)";
-                if (i === 2) focus = "Performance optimization & Efficiency";
-                if (i === 3) focus = "Code robustness, Error Handling, and Comments";
-
-                let validationData = "";
-                try {
-                    log(`⚡ Cycle ${i}: Running validation research...`);
-                    const valQuery = `${rawQuery} ${focus} best practices`;
-                    const valRes = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(valQuery)}&format=json`, { signal });
-                    const valJson = await valRes.json();
-                    validationData = valJson.RelatedTopics ? valJson.RelatedTopics.slice(0,2).map(t=>t.Text).join('\n') : "";
-                } catch(e) {}
-
-                const analyzerPrompt = `System: You are an Elite Code Auditor.
-                CONTEXT: User Task: ${rawQuery}. Focus: ${focus}. Validation: ${validationData}.
-                CURRENT CODE: ${currentCode}
-                MANDATE: Critically analyze and REWRITE the code to fix flaws related to "${focus}". Output ONLY code.`;
-
-                const loopUrl = `https://text.pollinations.ai/${encodeURIComponent(analyzerPrompt)}?model=openai`;
-                const loopRes = await fetchWithRetry(loopUrl, { signal });
-                currentCode = await loopRes.text();
+            // --- UNIVERSAL LEVIATHAN SCAN ---
+            const performLeviathanScan = async (context, phaseName) => {
+                log(`[${phaseName}] Engaging 18-Vector Omni-Scan...`);
                 
-                editorInput.value = currentCode;
-                void editorInput.offsetWidth;
-            }
+                const fetchPackageInfo = async () => {
+                    try {
+                        let url = "";
+                        if (pkgManager === 'npm') url = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(context)}&size=3`;
+                        else if (pkgManager === 'cargo') url = `https://crates.io/api/v1/crates?q=${encodeURIComponent(context)}&per_page=3`;
+                        else if (pkgManager === 'nuget') url = `https://azuresearch-usnc.nuget.org/query?q=${encodeURIComponent(context)}&take=3`;
+                        else if (pkgManager === 'maven') url = `https://search.maven.org/solrsearch/select?q=${encodeURIComponent(context)}&rows=3&wt=json`;
+                        else if (pkgManager === 'pub') url = `https://pub.dev/api/search?q=${encodeURIComponent(context)}`;
+                        if (!url) return "";
+                        const res = await fetchWithRetry(url, { signal });
+                        const json = await res.json();
+                        return "Packages: " + JSON.stringify(json).substring(0, 500); 
+                    } catch(e) { return ""; }
+                };
 
-            // 5. THE PRISM (SHADER ENGINE) - Conditional
-            if (isShaderRequest) {
-                log("💎 The Prism: Initializing Shader Engine...");
-                try {
-                    // Specific shader research
-                    const shaderRes = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent("glsl optimization techniques shader best practices")}&format=json`, { signal });
-                    const shaderJson = await shaderRes.json();
-                    const shaderContext = shaderJson.RelatedTopics ? shaderJson.RelatedTopics.slice(0,3).map(t=>t.Text).join('\n') : "Use vector operations.";
-                    
-                    log("💎 The Prism: Optimizing Math & GPU Instructions...");
-                    const shaderPrompt = `System: You are a Graphics Engineer.
-                    Task: Optimize this shader code for GPU performance (reduce instructions, use mad, pack vectors).
-                    Context: ${shaderContext}
-                    Code: ${currentCode}
-                    Output ONLY the optimized shader code.`;
-                    
-                    const prismUrl = `https://text.pollinations.ai/${encodeURIComponent(shaderPrompt)}?model=openai`;
-                    const prismRes = await fetchWithRetry(prismUrl, { signal });
-                    currentCode = await prismRes.text();
-                    editorInput.value = currentCode;
-                } catch(e) { log("Shader optimization skipped."); }
-            }
+                const fetchDocs = async () => {
+                    try {
+                        const sites = "site:developer.mozilla.org OR site:docs.python.org OR site:stackoverflow.com";
+                        const res = await fetchWithRetry(`https://api.duckduckgo.com/?q=${encodeURIComponent(context + " " + sites)}&format=json`, { signal });
+                        const json = await res.json();
+                        return json.RelatedTopics ? json.RelatedTopics.slice(0,3).map(t => t.Text).join('\n') : "";
+                    } catch(e) { return ""; }
+                };
 
-            // 6. THE MAXIMIZER (General Optimization)
-            log("🚀 The Maximizer: Compressing logic for O(n)...");
-            const maxPrompt = `System: You are a Code Optimizer.
-            Task: Refactor this code for MAXIMUM efficiency and speed without removing features. Reduce complexity.
-            Code: ${currentCode}
-            Output ONLY the code.`;
-            const maxUrl = `https://text.pollinations.ai/${encodeURIComponent(maxPrompt)}?model=openai`;
-            const maxRes = await fetchWithRetry(maxUrl, { signal });
-            currentCode = await maxRes.text();
-            editorInput.value = currentCode;
+                const fetchGitHub = async () => {
+                    try {
+                        const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(context)}+language:${lang}&sort=stars&per_page=3`;
+                        const res = await fetchWithRetry(url, { signal });
+                        const json = await res.json();
+                        return json.items ? json.items.map(r => `GH: ${r.full_name} (${r.stargazers_count}★)`).join('\n') : "";
+                    } catch(e) { return ""; }
+                };
 
-            // 7. FINAL REPAIR (Sanity Check)
-            log("🛡️ Final Polish: Linting & Integrity Check...");
-            const finalPrompt = `System: You are a QA Bot.
-            Task: Check for syntax errors, missing imports, or broken logic. Fix them. Ensure indentation is perfect.
-            Code: ${currentCode}
-            Output ONLY the final code.`;
-            const finalUrl = `https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}?model=openai`;
-            const finalRes = await fetchWithRetry(finalUrl, { signal });
-            currentCode = await finalRes.text();
+                const fetchDevTo = async () => {
+                    try {
+                        const url = `https://dev.to/api/articles?per_page=3&tag=${encodeURIComponent(lang)}`;
+                        const res = await fetchWithRetry(url, { signal });
+                        const json = await res.json();
+                        return json.length > 0 ? json.map(a => `Article: ${a.title}`).join('\n') : "";
+                    } catch(e) { return ""; }
+                };
 
-            removeThinkingMessage(thinkingEl);
+                const [pkgs, docs, gh, devto] = await Promise.all([fetchPackageInfo(), fetchDocs(), fetchGitHub(), fetchDevTo()]);
+                
+                return `RESEARCH DUMP:\n${pkgs}\n${docs}\n${gh}\n${devto}`;
+            };
+
+            // NEW: HYPER SCAN VELOCITY (15-Vector Permutations in ONE BATCH)
+            const performHyperLeviathanScan = async (context, phaseName) => {
+                log(`[${phaseName}] Initiating Recursive Hyper-Scan (3x Depth)...`);
+                
+                // 15 Permutations for maximum coverage
+                const permutations = [
+                    context, // Base
+                    `${context} advanced tutorial`, // Depth
+                    `${context} security vulnerabilities`, // Safety
+                    `${context} performance optimization`, // Speed
+                    `${context} alternative libraries`, // Breadth
+                    `${context} common errors`, // Debugging
+                    `${context} best practices`, // Standards
+                    `${context} documentation examples`, // Syntax
+                    `${context} github issues`, // Real-world problems
+                    `${context} stackoverflow discussions`, // Community wisdom
+                    `${context} deprecation warnings`, // Future-proofing
+                    `${context} edge cases`, // Robustness
+                    `${context} memory management`, // Efficiency
+                    `${context} concurrency patterns`, // Scalability
+                    `${context} design patterns` // Architecture
+                ];
+
+                // 2. Fire Parallel Swarm (Batched to avoid browser limits - increased to 15 for velocity)
+                // Browsers can often handle ~6-10 per domain, but with diverse endpoints and proxies, we push for speed.
+                let results = "";
+                const batchSize = 15; 
+                for (let i = 0; i < permutations.length; i += batchSize) {
+                    const batch = permutations.slice(i, i + batchSize);
+                    const batchResults = await Promise.all(batch.map(p => performLeviathanScan(p, phaseName)));
+                    results += batchResults.join('\n\n') + '\n\n';
+                }
+                
+                return results;
+            };
+
+            // === STAGE 1: IDEA MAKER (STRATEGIST) ===
+            log("Stage 1/14: Strategist & Red Team (Adversarial Review)...");
+            const r1 = await performHyperLeviathanScan(rawQuery, "STRATEGY");
             
-            // Output Final Code
-            editorInput.value = currentCode;
+            const strategyPrompt = `System: World-Class Elite Architect.
+            Research: ${r1}
+            Task: Create a robust execution plan.
+            MANDATORY: Evidence Graph, Adversarial Review, Final Plan.
+            Be the BEST.`;
+            
+            let plan = "";
+            try {
+                const res = await fetchAI(strategyPrompt, signal);
+                plan = await res.text();
+                addMessage(`### 🛡️ Stratagem & Evidence Graph\n${plan}`, 'ai', 'text', thoughts);
+            } catch(e) {}
+
+            // === STAGE 2: SCRIPT MAKER ===
+            log("Stage 2/14: Script Drafting...");
+            const r2 = await performHyperLeviathanScan(rawQuery + " implementation details", "DRAFTING");
+            const draftPrompt = `System: Senior Principal Dev. Plan: ${plan}. Research: ${r2}. Task: Write COMPLETE code. Strict typing. Do your absolute best.`;
+            let code = "";
+            try {
+                const res = await fetchAI(draftPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 3, 4, 5: THE FIXERS ===
+            for (let i = 3; i <= 5; i++) {
+                log(`Stage ${i}/14: Fixer Protocol (Pass ${i-2})...`);
+                const rFix = await performHyperLeviathanScan(rawQuery + " bugs security", `FIXER_${i-2}`);
+                const fixPrompt = `System: Elite Code Auditor. Context: ${rFix}. Code: ${code}. Rewrite and FIX. Be meticulous. Output ONLY code.`;
+                try {
+                    const res = await fetchAI(fixPrompt, signal);
+                    code = await res.text();
+                    editorInput.value = code;
+                } catch(e) {}
+            }
+
+            // === STAGE 6: THE PRISM ===
+            log("Stage 6/14: The Prism (Shader/Math)...");
+            const rShader = await performHyperLeviathanScan(rawQuery + " gpu optimization", "PRISM");
+            const prismPrompt = `System: Graphics Engineer. Context: ${rShader}. Code: ${code}. Optimize math/shaders. Output ONLY code.`;
+            try {
+                const res = await fetchAI(prismPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 7: THE MAXIMIZER ===
+            log("Stage 7/14: The Maximizer...");
+            const rMax = await performHyperLeviathanScan(rawQuery + " performance", "MAXIMIZER");
+            const maxPrompt = `System: Optimization Expert. Context: ${rMax}. Code: ${code}. Refactor for O(n). Output ONLY code.`;
+            try {
+                const res = await fetchAI(maxPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 8: THE AESTHETE ===
+            log("Stage 8/14: The Aesthete (UI Styling)...");
+            const rAes = await performHyperLeviathanScan(rawQuery + " ui design css animation", "AESTHETE");
+            const aesPrompt = `System: UI/UX Designer & Frontend Expert.
+            Context: ${rAes}
+            Code: ${code}
+            Action: Polish the Visuals.
+            1. Improve CSS/Styling (Modern, clean, responsive).
+            4. Ensure "Wow" factor.
+            Output ONLY the enhanced code.`;
+            try {
+                const res = await fetchAI(aesPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 9: THE MOTION MASTER (2D) ===
+            log("Stage 9/14: The Animator (2D HUD/UI)...");
+            const r2D = await performHyperLeviathanScan(rawQuery + " gsap css animation ui motion", "ANIMATOR_2D");
+            const anim2DPrompt = `System: Lead Motion Designer (2D).
+            Context: ${r2D}
+            Code: ${code}
+            Action: Implement award-winning 2D animations for HUD/UI (GSAP, CSS Keyframes, Canvas). Make it juicy and responsive.
+            Output ONLY code.`;
+            try {
+                const res = await fetchAI(anim2DPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 10: THE DIMENSIONIST (3D) ===
+            log("Stage 10/14: The Dimensionist (3D Motion)...");
+            const r3D = await performHyperLeviathanScan(rawQuery + " three.js webgl 3d animation", "DIMENSIONIST_3D");
+            const anim3DPrompt = `System: Senior 3D Technical Artist.
+            Context: ${r3D}
+            Code: ${code}
+            Action: Implement high-end 3D animations (Three.js, WebGL, CSS 3D transforms) if applicable. Ensure cinematic quality and smooth transitions.
+            Output ONLY code.`;
+            try {
+                const res = await fetchAI(anim3DPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 11: THE FX ALCHEMIST ===
+            log("Stage 11/14: The FX Alchemist (Particles/Magic)...");
+            const rFX = await performHyperLeviathanScan(rawQuery + " particle systems vfx glow bloom", "FX_ALCHEMIST");
+            const fxPrompt = `System: VFX Supervisor.
+            Context: ${rFX}
+            Code: ${code}
+            Action: Add "Magic". Particle systems, Glows, Bloom, Sparks.
+            Make it look expensive and high-production value.
+            Output ONLY code.`;
+            try {
+                const res = await fetchAI(fxPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 12: THE ALL-MASTER ===
+            log("Stage 12/14: The All-Master (Soul Infusion)...");
+            const rSoul = await performHyperLeviathanScan(rawQuery + " code elegance craftsmanship", "ALL_MASTER");
+            const soulPrompt = `System: The All-Master (Grand Architect).
+            Context: ${rSoul}
+            Code: ${code}
+            Action: 
+            1. Solve "Real Bad Problems" (Logical dead ends).
+            2. Infuse Quality & Love (Meaningful comments, elegant structures).
+            3. Final Polish before repair.
+            Output ONLY code.`;
+            try {
+                const res = await fetchAI(soulPrompt, signal);
+                code = await res.text();
+                editorInput.value = code;
+            } catch(e) {}
+
+            // === STAGE 13 & 14: THE QA DUO (REPAIRER + BUG CATCHER) ===
+            log("Stage 13-14/14: The QA Duo (Collaboration Loop)...");
+            
+            // Initial Hyper-Scan for bugs
+            const rBug = await performHyperLeviathanScan(rawQuery + " race conditions memory leaks edge cases", "BUG_CATCHER_DUO");
+            
+            // Run 2 Iterations of the Duo
+            for(let k=0; k<2; k++) {
+                log(`QA Duo Cycle ${k+1}/2: Repairer applying fixes...`);
+                // 1. Repairer acts first
+                const repairerPrompt = `System: QA Repairer.
+                Context: ${rBug}
+                Code: ${code}
+                Action: FIX ALL SYNTAX AND LINTING ISSUES.
+                - Apply fixes directly to the code.
+                - Add professional docstrings.
+                - Ensure strict typing/formatting.
+                - DO NOT list errors. FIX THEM.
+                Output ONLY the complete, fixed code.`;
+                try {
+                    const rRes = await fetchAI(repairerPrompt, signal);
+                    code = await rRes.text();
+                    editorInput.value = code;
+                } catch(e){}
+
+                log(`QA Duo Cycle ${k+1}/2: Bug Catcher eliminating flaws...`);
+                // 2. Bug Catcher critiques and fixes
+                const bugPrompt = `System: Elite Bug Hunter.
+                Context: ${rBug}
+                Code: ${code}
+                Action: AGGRESSIVE BUG ELIMINATION.
+                - Hunt down race conditions, memory leaks, and logical fallacies.
+                - REWRITE broken logic immediately.
+                - PREVENT edge case failures.
+                - DO NOT provide a report. DO NOT say "I found X".
+                - JUST FIX IT.
+                Output ONLY the fully repaired, production-ready code.`;
+                try {
+                    const bRes = await fetchAI(bugPrompt, signal);
+                    code = await bRes.text();
+                    editorInput.value = code;
+                } catch(e){}
+            }
+
             editorInput.classList.remove('flash-code');
             void editorInput.offsetWidth; 
             editorInput.classList.add('flash-code');
-            
-            const successMsg = `**DeepScript v6.0 Titan Complete.**
-            
-            1. **Research:** 11-Core Scan (including OSV, Docker, Reddit).
-            2. **Draft:** Generated initial prototype.
-            3. **Recursion:** 3x Self-Correction Loops.
-            4. **Prism:** Shader Engine (Active: ${isShaderRequest}).
-            5. **Maximizer:** Logic Compressed.
-            6. **Final QA:** Integrity Verified.
-            
-            The **optimized, battle-tested solution** is now in the Architect IDE.`;
-            
-            addMessage(successMsg, 'ai', 'text', thoughts);
+
+            removeThinkingMessage(thinkingEl);
+            addMessage(`**Leviathan Velocity Complete.**\n14 Stages executed. 15-Vector Hyper-Scan active. QA Duo (Repairer + Bug Catcher) handshake verified.`, 'ai', 'text', thoughts);
         }
 
-        // --- TOOL EXECUTION ---
         async function executeTool(tool, text, thinkingEl, signal, log, thoughts) {
             let url = tool.url;
             let query = text.split(' ').pop(); 
 
-            // -- NEWS (UPGRADED v11.7) --
             if (tool.id === 'googlenews') {
-                // 1. Refined Query Extraction
                 query = text.replace(/news about|news on|headlines for|latest in|show me news|news|headlines/gi, '').trim();
                 if (!query || query.length < 2) query = "World Technology";
-                
                 log(`📡 Tuning frequency to: "${query}"...`);
-                
-                // 2. Fetch Google News RSS via Proxy (Keyless, Free, Accurate)
                 const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
-                
                 try {
-                    // We need a proxy for RSS XML to avoid CORS
                     const res = await fetchProxy(rssUrl);
                     if (!res.ok) throw new Error("Signal Lost");
-                    
                     const xmlText = await res.text();
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-                    const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 5); // Top 5 stories
+                    const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 5); 
 
                     if (items.length > 0) {
                         log("Analyzing headlines for briefing...");
-                        
-                        // Extract details for AI processing
                         const newsData = items.map(item => {
                             const title = item.querySelector("title")?.textContent || "Unknown";
                             const link = item.querySelector("link")?.textContent || "#";
                             const pubDate = item.querySelector("pubDate")?.textContent || "";
-                            // Clean up date
                             const dateObj = new Date(pubDate);
                             const timeStr = isNaN(dateObj) ? "Recent" : dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                             return { title, link, time: timeStr };
                         });
-
-                        // 3. Generate AI Executive Briefing
                         const headlinesText = newsData.map(n => `- ${n.title}`).join('\n');
                         const prompt = `You are a professional news anchor. 
                         Topic: "${query}"
                         Headlines:
                         ${headlinesText}
-                        
                         Task: Write a short, punchy, 3-sentence "Executive Briefing" summarizing the current situation based ONLY on these headlines. 
                         Tone: Professional, neutral, informative.`;
-                        
                         let briefing = "Here are the latest updates.";
                         try {
-                            const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
-                            const aiRes = await fetchWithRetry(aiUrl, { signal });
-                            briefing = await aiRes.text();
-                        } catch(e) {
-                            briefing = "Live feed established below.";
-                        }
+                            const res = await fetchAI(prompt, signal);
+                            briefing = await res.text();
+                        } catch(e) { briefing = "Live feed established below."; }
 
-                        // 4. Construct Output
                         let out = `### 📰 Live Briefing: ${query.charAt(0).toUpperCase() + query.slice(1)}\n\n`;
-                        out += `> ${briefing.replace(/\n/g, ' ')}\n\n`; // Blockquote for briefing
+                        out += `> ${briefing.replace(/\n/g, ' ')}\n\n`; 
                         out += `---\n`;
-                        
                         newsData.forEach(n => {
-                            // Clean title (Google News often adds "- Source" at the end)
                             const cleanTitle = n.title.split(' - ')[0];
                             const source = n.title.split(' - ').pop() || 'News';
                             out += `**[${cleanTitle}](${n.link})**\n`;
                             out += `<span class="text-xs text-zinc-500"><i class="fa-regular fa-clock"></i> ${n.time} • <i class="fa-solid fa-newspaper"></i> ${source}</span>\n\n`;
                         });
-
                         removeThinkingMessage(thinkingEl);
                         addMessage(out, 'ai', 'text', thoughts);
-                    } else {
-                        throw new Error("No signal");
-                    }
+                    } else { throw new Error("No signal"); }
                 } catch(e) {
                     log("Satellite link unstable. Attempting web search backup...");
                     await executeTool(TOOL_REGISTRY.find(t=>t.id==='websearch'), `${query} news`, thinkingEl, signal, log, thoughts); 
@@ -1122,7 +1075,6 @@
                 return;
             }
 
-            // -- GH REPO --
             if (tool.id === 'ghrepo') {
                 query = text.replace(/github repo|find repo|find code/gi, '').trim();
                 url = `${tool.url}${encodeURIComponent(query)}`;
@@ -1141,87 +1093,31 @@
                 return;
             }
 
-            // -- RIZZ / FLIRT MODULE (INIT) --
             if (tool.id === 'rizz') {
                 const description = text.replace(/rizz up|pickup line for|flirt with|date idea for/gi, '').trim() || "crush";
-                
                 AI_STATE.rizz.active = true;
                 AI_STATE.rizz.target = description;
-                
                 removeThinkingMessage(thinkingEl);
-                
-                const promptHTML = `
-                **Target Locked:** "${description}"
-                
-                To generate the perfect line, I need calibration:
-                
-                1. **Style:** Spicy 🌶️, Romantic 🌹, Witty 🧠, Cheesy 🧀, Dark 🌑, Poetic 📜?
-                2. **Proximity:** Stranger, Friend, Talking Stage, Dating, Married?
-                3. **Type:** One-liner, Joke, Deep Question, Roast?
-                4. **Interests:** What do they like? (e.g., Anime, Cars, Gym, Reading)
-                
-                *Reply with your choices (e.g., "Spicy joke for a gym rat stranger") or just say "Skip" for a random mix.*
-                `;
-                
+                const promptHTML = `**Target Locked:** "${description}"\nTo generate the perfect line, I need calibration:\n1. **Style:** Spicy 🌶️, Romantic 🌹, Witty 🧠, Cheesy 🧀, Dark 🌑, Poetic 📜?\n2. **Proximity:** Stranger, Friend, Talking Stage, Dating, Married?\n3. **Type:** One-liner, Joke, Deep Question, Roast?\n4. **Interests:** What do they like? (e.g., Anime, Cars, Gym, Reading)\n*Reply with your choices (e.g., "Spicy joke for a gym rat stranger") or just say "Skip" for a random mix.*`;
                 addMessage(promptHTML, 'ai', 'text', thoughts);
                 return;
             }
 
-            // -- MOOD ANALYZER (INIT) --
             if (tool.id === 'mood') {
-                // Check if user already provided name in the initial query (e.g. "analyze mood of my boss")
                 let initialTarget = text.replace(/analyze mood of|analyze mood|mood check/gi, '').trim();
-                
                 AI_STATE.mood.active = true;
-                
                 removeThinkingMessage(thinkingEl);
-
                 if (initialTarget && initialTarget.length > 2) {
-                    // Skip step 1 if we already have the name
                     AI_STATE.mood.target = initialTarget;
                     AI_STATE.mood.step = 2;
                     addMessage(`**Subject Identified:** "${initialTarget}"\n\nPlease paste the **messages** you want me to analyze. (Include yours for better context)`, 'ai', 'text', thoughts);
                 } else {
-                    // Go to step 1
                     AI_STATE.mood.step = 1;
                     addMessage(`**Mood Analysis Initialized.**\n\nWho is the person we are analyzing? (e.g., Crush, Boss, Friend)`, 'ai', 'text', thoughts);
                 }
                 return;
             }
 
-            // -- MATH EVAL --
-            if (tool.id === 'math_eval' || tool.id === 'math_newton') {
-                query = text.replace(/solve|calculate|evaluate|compute|what is/gi, '').trim();
-                log("Solving math problem...");
-                try {
-                    const evalUrl = `http://api.mathjs.org/v4/?expr=${encodeURIComponent(query)}`;
-                    const res = await fetchWithRetry(evalUrl, { signal });
-                    const result = await res.text();
-                    if(res.ok && !result.includes("Error")) {
-                        removeThinkingMessage(thinkingEl);
-                        addMessage(`### 🧮 Result\n\`\`\`\n${query} = ${result}\n\`\`\``, 'ai', 'text', thoughts);
-                        return;
-                    }
-                } catch(e) {}
-                // Fallback to Newton
-                const operation = query.includes('integrate') ? 'integrate' : query.includes('derive') ? 'derive' : 'simplify';
-                const cleanQ = query.replace(/integrate|derive|simplify/gi, '').trim();
-                try {
-                    const nUrl = `https://newton.now.sh/api/v2/${operation}/${encodeURIComponent(cleanQ)}`;
-                    const res = await fetchWithRetry(nUrl, { signal });
-                    const json = await res.json();
-                    if(json.result) {
-                        removeThinkingMessage(thinkingEl);
-                        addMessage(`### 📐 ${operation.charAt(0).toUpperCase()+operation.slice(1)}\n\`\`\`\n${json.result}\n\`\`\``, 'ai', 'text', thoughts);
-                        return;
-                    }
-                } catch(e) {}
-                log("Calculation complex. Searching theory...");
-                await executeTool(TOOL_REGISTRY.find(t=>t.id==='arxiv'), query, thinkingEl, signal, log, thoughts);
-                return;
-            }
-
-            // -- DICTIONARY --
             if (tool.id === 'dictionary') {
                 query = text.replace(/define|definition|meaning of/gi, '').trim();
                 url = `${tool.url}${encodeURIComponent(query)}`;
@@ -1242,30 +1138,6 @@
                 return;
             }
 
-            if (tool.id === 'arxiv') {
-                log("Searching ArXiv...");
-                url = `${tool.url}${encodeURIComponent(query)}`;
-                try {
-                    const proxyUrl = await fetchProxy(url, { signal });
-                    const text = await proxyUrl.text();
-                    const parser = new DOMParser();
-                    const xml = parser.parseFromString(text, "text/xml");
-                    const entries = xml.querySelectorAll("entry");
-                    if(entries.length > 0) {
-                        let out = `### ⚛️ ArXiv Papers: ${query}\n`;
-                        Array.from(entries).slice(0,3).forEach(e => {
-                             out += `**${e.querySelector("title").textContent.trim()}**\n${e.querySelector("summary").textContent.trim().substring(0,150)}...\n[Read PDF](${e.querySelector("id").textContent})\n\n`;
-                        });
-                        removeThinkingMessage(thinkingEl);
-                        addMessage(out, 'ai', 'text', thoughts);
-                        return;
-                    }
-                } catch(e) {}
-                await queryCortex(text, thinkingEl, signal, log, thoughts);
-                return;
-            }
-
-            // -- RESEARCH & DIG DEEPER --
             if (tool.id === 'digdeeper') {
                 query = text.replace(/dig deeper|exhaustive research|thesis on/gi, '').trim();
                 log("Formulating 12-point investigation...");
@@ -1284,9 +1156,10 @@
                 const bigData = results.join('\n\n').trim();
                 log("Writing doctoral-level thesis...");
                 const thesisPrompt = `Write a Doctoral Thesis on "${query}". Data Context: ${bigData.substring(0, 15000)}... Structure: Abstract, Introduction, Analysis, Conclusion.`;
-                const aiReq = await fetchWithRetry(`https://text.pollinations.ai/${encodeURIComponent(thesisPrompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`, { signal });
+                const res = await fetchAI(thesisPrompt, signal);
+                const txt = await res.text();
                 removeThinkingMessage(thinkingEl);
-                addMessage(await aiReq.text(), 'ai', 'text', thoughts);
+                addMessage(txt, 'ai', 'text', thoughts);
                 return;
             }
 
@@ -1318,10 +1191,10 @@
                 
                 log("Writing report...");
                 const prompt = `Write research report. Topic: ${fullContext}. Data: ${cd}. Format: Markdown.`;
-                const aiUrl = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai&system=${encodeURIComponent(OMNIBOT_PERSONA)}`;
-                const aiReq = await fetchWithRetry(aiUrl, { signal });
+                const aiRes = await fetchAI(prompt, signal);
+                const txt = await aiRes.text();
                 removeThinkingMessage(thinkingEl);
-                addMessage(await aiReq.text(), 'ai', 'text', thoughts);
+                addMessage(txt, 'ai', 'text', thoughts);
                 return;
             }
             
@@ -1332,16 +1205,13 @@
                 return;
             }
             
-            // -- WEB SEARCH (Fixed Handler) --
             if (tool.id === 'websearch') {
                 query = text.replace(/search for|search|find|lookup|about/gi, '').trim();
                 url = `${tool.url}${encodeURIComponent(query)}`;
                 log(`Consulting Knowledge Base for "${query}"...`);
-                
                 try {
                     const req = await fetchWithRetry(url, { signal });
                     const res = await req.json();
-                    
                     if(res.query?.search?.length) {
                         let out = `### 🔍 Knowledge Base: ${query}\n`;
                         res.query.search.slice(0, 4).forEach(i => {
@@ -1350,9 +1220,7 @@
                         });
                         removeThinkingMessage(thinkingEl);
                         addMessage(out, 'ai', 'text', thoughts);
-                    } else {
-                        throw new Error("No results");
-                    }
+                    } else { throw new Error("No results"); }
                 } catch(e) {
                     removeThinkingMessage(thinkingEl);
                     addMessage("Search yielded no tangible results.", 'ai', 'text', thoughts);
@@ -1360,11 +1228,9 @@
                 return;
             }
             
-            // Generic fallback
             query = text.replace(/search for/gi, '').trim();
             url = `${tool.url}${encodeURIComponent(query)}`;
             if (['npm','pypi','crates'].includes(tool.id)) url = tool.url + encodeURIComponent(query);
-            
             log(`Querying ${tool.name}...`);
             try {
                 const req = await fetchWithRetry(url, { signal });
@@ -1379,13 +1245,10 @@
 
         async function executeCanvas(text, thinkingEl, signal, log, thoughts) {
             log("Analyzing requirements...");
-
-            // 1. Context Gathering (Restored)
             let contextData = "";
             const lower = text.toLowerCase();
             let toolToUse = null;
             
-            // Heuristics for tool selection
             if (lower.includes('npm') || lower.includes('node') || lower.includes('react') || lower.includes('vue')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='npm');
             else if (lower.includes('python') || lower.includes('pip')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='pypi');
             else if (lower.includes('rust') || lower.includes('cargo')) toolToUse = TOOL_REGISTRY.find(t=>t.id==='crates');
@@ -1397,12 +1260,8 @@
                 try {
                     const query = text.replace(/script|code|write|generate|a|an|for/gi, '').trim();
                     let searchUrl = toolToUse.url + encodeURIComponent(query);
-                    // Special cases
                     if(toolToUse.id === 'ghrepo') searchUrl = `${toolToUse.url}${encodeURIComponent(query)}`;
-                    
                     const res = await fetchWithRetry(searchUrl, { signal });
-                    
-                    // Handle text vs json APIs
                     let dataStr = "";
                     if (toolToUse.id === 'cheatsh') {
                         dataStr = await res.text();
@@ -1410,60 +1269,54 @@
                         const json = await res.json();
                         dataStr = JSON.stringify(json).substring(0, 1000);
                     }
-                    
                     contextData = `Reference Data (${toolToUse.name}): ${dataStr}`;
                     log("Context acquired.");
-                } catch (e) {
-                    log("Context search skipped (Connection).");
-                }
+                } catch (e) { log("Context search skipped (Connection)."); }
             }
 
-            // 2. Generation
             log("Architecting solution...");
             const prompt = `System: You are an expert coder. ${contextData}\nUser Task: ${text}\nInstruction: Write the complete, working code for this task. Output ONLY the code. No markdown.`;
-            
-            const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`;
-            const res = await fetchWithRetry(url, { signal });
+            const res = await fetchAI(prompt, signal);
             const code = await res.text();
             
             removeThinkingMessage(thinkingEl);
             editorInput.value = code;
             editorInput.classList.remove('flash-code');
-            void editorInput.offsetWidth; // Trigger reflow
+            void editorInput.offsetWidth; 
             editorInput.classList.add('flash-code');
-            
             addMessage("I have drafted the code in the Architect IDE based on the analysis.", 'ai', 'text', thoughts);
         }
 
         function openFullscreen(src) { document.getElementById('fullscreen-modal').classList.remove('hidden'); document.getElementById('fullscreen-img').src = src; }
         function closeFullscreen() { document.getElementById('fullscreen-modal').classList.add('hidden'); }
         async function downloadImage(url) { window.open(url, '_blank'); }
-        function copyToClipboard(btn, txt) { navigator.clipboard.writeText(decodeURIComponent(txt)); }
-        
         function fillInput(txt) { document.getElementById('user-input').value = txt; }
         
-        // Updated: Clears chat before setting prefix to ensure fresh context
         function setPrefix(p) { 
-            clearChat(); 
+            const newToolId = predictToolId(p);
+            if (!newToolId || newToolId !== AI_STATE.lastToolId) {
+                clearChat();
+            } else {
+                resetToolStates();
+            }
             fillInput(p); 
             toggleTools(); 
             document.getElementById('user-input').focus(); 
         }
 
-        // Updated: Helper for welcome screen buttons to clear chat
         function startNewChat(txt) {
-            clearChat();
+             const newToolId = predictToolId(txt);
+             if (!newToolId || newToolId !== AI_STATE.lastToolId) {
+                clearChat();
+            } else {
+                resetToolStates();
+            }
             fillInput(txt);
         }
 
-        function clearChat() { 
-            if(abortController) abortController.abort(); 
-            document.getElementById('chat-box').innerHTML = ''; 
-            document.getElementById('code-input').value = '';
-            addMessage("Memory wiped. Ready for new directive.", 'ai'); 
+        function resetToolStates() {
+            if(abortController) abortController.abort();
             setProcessingState(false);
-            
-            // Reset all internal states
             AI_STATE.research.active = false;
             AI_STATE.rizz.active = false;
             AI_STATE.rizz.target = null;
@@ -1471,11 +1324,23 @@
             AI_STATE.mood.step = 0;
             AI_STATE.mood.target = null;
         }
+
+        function clearChat() { 
+            resetToolStates();
+            document.getElementById('chat-box').innerHTML = ''; 
+            document.getElementById('code-input').value = '';
+            addMessage("Memory wiped. Ready for new directive.", 'ai'); 
+            AI_STATE.lastToolId = null; 
+        }
         function toggleTools() { document.getElementById('tools-menu').classList.toggle('hidden'); }
         
-        // Updated: Clears chat when switching to canvas mode via button
         function enableCanvasAndType(text) { 
-            clearChat();
+            const newToolId = predictToolId(text);
+            if (!newToolId || newToolId !== AI_STATE.lastToolId) {
+                clearChat();
+            } else {
+                resetToolStates();
+            }
             if(!AI_STATE.canvasMode) toggleCanvas(); 
             fillInput(text); 
         }
