@@ -179,7 +179,7 @@
                                     <span class="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-regular fa-newspaper"></i></span>
                                     <span>News (Poland)</span>
                                 </button>
-                                <button onclick="enableCanvasAndType('script a python web scraper')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
+                                <button onclick="enableCanvasAndType('deepscript a python web scraper')" class="text-xs bg-white/5 hover:bg-white/10 text-zinc-300 px-4 py-3 rounded-xl border border-white/5 transition-all text-left flex items-center gap-3 group">
                                     <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform"><i class="fa-solid fa-terminal"></i></span>
                                     <span>Script (Python)</span>
                                 </button>
@@ -198,16 +198,14 @@
                     <div id="tools-menu" class="absolute bottom-full left-0 mb-4 w-64 glass-panel rounded-2xl shadow-2xl hidden flex flex-col z-50 transform transition-all origin-bottom-left max-h-80 overflow-y-auto custom-scrollbar border border-zinc-700/50 p-1">
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Research</div>
                         <button onclick="setPrefix('dig deeper into ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3 bg-indigo-500/10 border border-indigo-500/20"><div class="w-7 h-7 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400"><i class="fa-solid fa-layer-group"></i></div><div><div class="font-medium">Dig Deeper</div><div class="text-[10px] text-zinc-500">Exhaustive Thesis</div></div></button>
-                        <button onclick="setPrefix('research ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400"><i class="fa-solid fa-microscope"></i></div><div><div class="font-medium">Deep Research</div><div class="text-[10px] text-zinc-500">Comprehensive report</div></div></button>
                         <button onclick="setPrefix('news about ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400"><i class="fa-regular fa-newspaper"></i></div><div><div class="font-medium">Global News</div><div class="text-[10px] text-zinc-500">Live headlines</div></div></button>
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Architect</div>
-                        <button onclick="enableCanvasAndType('script ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-code"></i></div><div><div class="font-medium">Generate Code</div><div class="text-[10px] text-zinc-500">Pro++ Scripting</div></div></button>
                         <button onclick="enableCanvasAndType('deepscript ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-network-wired"></i></div><div><div class="font-medium">DeepScript v13.0</div><div class="text-[10px] text-zinc-500">Leviathan Velocity Pro</div></div></button>
                         <button onclick="setPrefix('find repo ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white"><i class="fa-brands fa-github"></i></div><div><div class="font-medium">Find Repo</div><div class="text-[10px] text-zinc-500">GitHub search</div></div></button>
 
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Creative</div>
                         <button onclick="setPrefix('image of ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400"><i class="fa-solid fa-image"></i></div><div><div class="font-medium">Generate Image</div><div class="text-[10px] text-zinc-500">AI Art creation</div></div></button>
-                        <button onclick="setPrefix('define ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-300"><i class="fa-solid fa-book"></i></div><div><div class="font-medium">Define Word</div><div class="text-[10px] text-zinc-500">Dictionary</div></div></button>
+                        <button onclick="setPrefix('define ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-300"><i class="fa-solid fa-book"></i></div><div><div class="font-medium">Define Word</div><div class="text-[10px] text-zinc-500">Universal Lexicon</div></div></button>
                         <div class="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-1">Social</div>
                         <button onclick="setPrefix('rizz up ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-pink-600/20 flex items-center justify-center text-pink-500"><i class="fa-solid fa-heart"></i></div><div><div class="font-medium">Rizz / Flirt</div><div class="text-[10px] text-zinc-500">Pickup lines & Tips</div></div></button>
                         <button onclick="setPrefix('analyze mood of ')" class="tool-item text-left px-3 py-2.5 rounded-lg text-zinc-300 hover:text-white text-xs flex items-center gap-3"><div class="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fa-solid fa-face-smile"></i></div><div><div class="font-medium">Mood Analyzer</div><div class="text-[10px] text-zinc-500">Emotion & Subtext</div></div></button>
@@ -259,14 +257,13 @@
             { id: 'pollinations', name: 'CORTEX', type: 'chat', url: 'https://text.pollinations.ai/' },
             { id: 'pollinations_img', name: 'DREAMER', type: 'image', url: 'https://image.pollinations.ai/prompt/' },
             { id: 'digdeeper', name: 'DEEP-DIVE', keywords: ['dig deeper', 'exhaustive research', 'thesis on'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
-            { id: 'research', name: 'RESEARCHER', keywords: ['research', 'report on'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
             { id: 'googlenews', name: 'NEWS', keywords: ['news', 'headline'], url: 'https://api.gdeltproject.org/api/v2/doc/doc?mode=artlist&maxrecords=5&format=json&sort=DateDesc&query=' },
             { id: 'websearch', name: 'SEARCH', keywords: ['search', 'find', 'lookup'], url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=' },
             { id: 'npm', name: 'NPM', keywords: ['npm', 'node package'], url: 'https://registry.npmjs.org/-/v1/search?text=' },
             { id: 'pypi', name: 'PYPI', keywords: ['pypi', 'python package'], url: 'https://pypi.org/pypi/' },
             { id: 'crates', name: 'CRATES', keywords: ['cargo', 'rust crate'], url: 'https://crates.io/api/v1/crates?q=' },
             { id: 'ghrepo', name: 'GIT-REPO', keywords: ['github repo'], url: 'https://api.github.com/search/repositories?per_page=1&q=' },
-            { id: 'dictionary', name: 'DICT', keywords: ['define'], url: 'https://api.dictionaryapi.dev/api/v2/entries/en/' },
+            { id: 'dictionary', name: 'DICT', keywords: ['define'], url: 'https://text.pollinations.ai/' },
             { id: 'urbandictionary', name: 'URBAN', keywords: ['slang'], url: 'https://api.urbandictionary.com/v0/define?term=' },
             { id: 'rizz', name: 'RIZZ-MASTER', keywords: ['rizz', 'pickup line', 'flirt', 'date idea', 'romance tip'], url: 'https://text.pollinations.ai/' },
             { id: 'mood', name: 'MOOD-SCAN', keywords: ['mood', 'analyze mood', 'emotion', 'vibe check'], url: 'https://text.pollinations.ai/' },
@@ -336,17 +333,26 @@
         async function summarizeText(encodedText) {
             let text = decodeURIComponent(encodedText);
             if (text.length > 1500) text = text.substring(0, 1500) + "...";
-            const prompt = `Summarize in bullet points:\n\n${text}`;
+            
+            // --- UPGRADED SUMMARY PROMPT ---
+            const prompt = `Task: Create an Executive Summary of the highest quality.
+            1. Summarize the core message concisely.
+            2. Extract the "Best Points" - the most valuable, insightful, or impactful details.
+            3. Point out the "Golden Nuggets" of information.
+            4. Format with clear headers and bullet points.
+            Text to Analyze:
+            ${text}`;
+            
             if (abortController) abortController.abort();
             abortController = new AbortController();
             setProcessingState(true);
             const thinkingEl = addThinkingMessage();
-            updateThinkingMessage(thinkingEl, "Condensing information...");
+            updateThinkingMessage(thinkingEl, "Extracting Best Points...");
             try {
                 const res = await fetchAI(prompt, abortController.signal);
                 const txt = await res.text();
                 removeThinkingMessage(thinkingEl);
-                addMessage(`### 📝 Summary\n${txt}`, 'ai');
+                addMessage(`### 📝 Executive Summary\n${txt}`, 'ai');
             } catch { removeThinkingMessage(thinkingEl); } 
             finally { if (abortController && !abortController.signal.aborted) setProcessingState(false); }
         }
@@ -364,16 +370,17 @@
             }
 
             if (type === 'image') {
-                innerHTML = `<div class="group relative bg-zinc-900/50 p-1.5 rounded-2xl ${sender === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'} border border-zinc-800/50 inline-block overflow-hidden shadow-sm"><img src="${content}" class="max-w-xs md:max-w-sm rounded-xl cursor-pointer transition-transform duration-300 group-hover:scale-[1.01]" onload="this.scrollIntoView({behavior:'smooth', block:'end'})" onerror="this.src='https://placehold.co/400x300?text=Image+Load+Error'" onclick="openFullscreen('${content}')"><button onclick="event.stopPropagation(); downloadImage('${content}')" class="absolute top-4 right-4 bg-black/60 hover:bg-blue-500 text-white w-9 h-9 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md shadow-xl translate-y-2 group-hover:translate-y-0" title="Download"><i class="fa-solid fa-download text-xs"></i></button></div>`;
+                const safeImgUrl = content.replace(/'/g, "\\'"); 
+                innerHTML = `<div class="group relative bg-zinc-900/50 p-1.5 rounded-2xl ${sender === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'} border border-zinc-800/50 inline-block overflow-hidden shadow-sm"><img src="${content}" class="max-w-xs md:max-w-sm rounded-xl cursor-pointer transition-transform duration-300 group-hover:scale-[1.01]" onload="this.scrollIntoView({behavior:'smooth', block:'end'})" onerror="this.src='https://placehold.co/400x300?text=Image+Load+Error'" onclick="openFullscreen('${safeImgUrl}')"><button onclick="event.stopPropagation(); downloadImage('${safeImgUrl}')" class="absolute top-4 right-4 bg-black/60 hover:bg-blue-500 text-white w-9 h-9 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md shadow-xl translate-y-2 group-hover:translate-y-0" title="Download"><i class="fa-solid fa-download text-xs"></i></button></div>`;
             } else {
                 const parsed = marked.parse(content);
-                const safeContent = encodeURIComponent(content);
+                const safeContent = encodeURIComponent(content).replace(/'/g, "%27");
                 
                 innerHTML = `<div class="group relative glass-panel px-6 py-4 rounded-2xl ${sender === 'user' ? 'rounded-tr-none bg-blue-600/10 border-blue-500/20 text-blue-100' : 'rounded-tl-none text-zinc-200'} text-sm leading-relaxed shadow-sm prose prose-invert max-w-none">
                     ${thoughtHTML}
                     ${parsed}
                     <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                        ${sender !== 'user' ? `<button onclick="explainLikeImFive('${safeContent}')" class="text-zinc-500 hover:text-pink-400 p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Explain Like I'm 5"><i class="fa-solid fa-child text-xs"></i></button>${sender !== 'user' ? `<button onclick="summarizeText('${safeContent}')" class="text-zinc-500 hover:text-purple-400 p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Summarize"><i class="fa-solid fa-list-check text-xs"></i></button>` : ''}` : ''}<button onclick="copyToClipboard(this, '${safeContent}')" class="text-zinc-500 hover:text-white p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Copy"><i class="fa-regular fa-copy text-xs"></i></button></div></div>`;
+                        ${sender !== 'user' ? `<button onclick="explainLikeImFive('${safeContent}')" class="text-zinc-500 hover:text-pink-400 p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Explain Like I'm 5"><i class="fa-solid fa-child text-xs"></i></button>${sender !== 'user' ? `<button onclick="summarizeText('${safeContent}')" class="text-zinc-500 hover:text-purple-400 p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Extract Best Points"><i class="fa-solid fa-list-check text-xs"></i></button>` : ''}` : ''}<button onclick="copyToClipboard(this, '${safeContent}')" class="text-zinc-500 hover:text-white p-1.5 rounded-lg bg-black/30 hover:bg-black/60 backdrop-blur-sm transition-colors" title="Copy"><i class="fa-regular fa-copy text-xs"></i></button></div></div>`;
             }
             div.innerHTML = sender === 'user' ? `${innerHTML}${avatar}` : `${avatar}<div class="space-y-1 flex-1 min-w-0"><div class="text-[11px] text-zinc-500 font-semibold tracking-wider uppercase ml-1">OmniBot</div>${innerHTML}</div>`;
             chatBox.appendChild(div);
@@ -632,9 +639,26 @@
             const params = text; 
             AI_STATE.rizz.active = false; 
             AI_STATE.rizz.target = null;
-            log(`Calibrating 4-Core Rizz Engine...`);
+            log(`Calibrating 5-Core Emotion Engine...`);
+            
+            const creativeAngles = [
+                "Noir Detective (Dark, mysterious, compelling)",
+                "Time Traveler (Urgent, destined, fateful)",
+                "Smooth Jazz Radio Host (Deep voice, calm, sultry)",
+                "Medieval Knight (Chivalrous, grand, poetic)",
+                "Cyberpunk Hacker (Edgy, digital, electric)",
+                "Stand-up Comedian (Self-deprecating, sharp, funny)",
+                "Existential Philosopher (Deep, intense, soul-gazing)",
+                "Chaotic Good Rogue (Playful, dangerous, fun)",
+                "Sitcom Neighbor (Breezy, casual, familiar)",
+                "Secret Agent (Subtle, confident, intriguing)"
+            ];
+            
+            const randomAngle = creativeAngles[Math.floor(Math.random() * creativeAngles.length)];
+            log(`Injecting Creative Persona: ${randomAngle.split('(')[0]}...`);
+
             const fetchAssociations = async () => {
-                log("Mining semantic puns...");
+                log("Mining emotional triggers...");
                 try {
                     const keyword = description.split(' ').filter(w => w.length > 3).pop() || 'love';
                     const res = await fetchWithRetry(`https://api.datamuse.com/words?ml=${encodeURIComponent(keyword)}&max=5`, { signal });
@@ -651,7 +675,7 @@
                 } catch (e) { return "Love is all you need."; }
             };
             const fetchAdvice = async () => {
-                log("Consulting relationships oracle...");
+                log("Consulting psychology oracle...");
                 try {
                     const res = await fetchWithRetry(`https://api.adviceslip.com/advice`, { signal });
                     const data = await res.json();
@@ -659,25 +683,38 @@
                 } catch (e) { return "Confidence is key."; }
             };
             const [associations, quote, advice] = await Promise.all([fetchAssociations(), fetchQuote(), fetchAdvice()]);
-            log("Synthesizing ultimate line...");
-            const prompt = `Task: Generate a customized pickup line or flirtation.
+            
+            log("Synthesizing charisma...");
+            
+            // --- UPGRADED RIZZ PROMPT (CREATIVE INJECTION) ---
+            const prompt = `Task: You are RizzGPT 5.0, a highly advanced Social Dynamics Engine.
+            
             Target Context: "${description}"
-            User Preferences (Style/Status/Type/Interests): "${params}"
-            Use this data to enhance the output:
-            - Pun inspiration: ${associations}
-            - Romantic quote: ${quote}
-            - Life advice: ${advice}
-            Format:
-            **The Line:** [The perfect line]
-            **Why it works:** [Analysis]
-            **Rizz Tip:** [Specific tip based on the user's proximity/status/hobbies]
-            Tone: Match the user's requested style (e.g., Spicy, Funny, Dark, etc).
-            Language: Respond in the SAME LANGUAGE as the user's input.`;
+            User Preferences: "${params}"
+            
+            CRITICAL CREATIVE MODIFIER: Adopt the subtle persona of a **${randomAngle}**.
+            (Do not act out the role literally like a roleplay, but use the *vibe* and *energy* of this archetype to flavor the line).
+            
+            Auxiliary Data: ${associations}, ${quote}, ${advice}
+            
+            Deep Analysis Protocol:
+            1. Decode the emotional subtext.
+            2. **BE UNPREDICTABLE.** Do not use generic pickup lines. 
+            3. Generate something unique, witty, or deeply charming that fits the Creative Modifier.
+            
+            Output Format:
+            **The Rizz:** [The perfect, creative line]
+            **Vibe Check:** [Mention the creative angle used: ${randomAngle.split('(')[0]}]
+            **Psychological Mechanics:** [Why this specific approach works]
+            **Execution Tip:** [Delivery advice matching the vibe]
+            
+            Constraint:
+            Respond in the SAME LANGUAGE as the user's input.`;
             
             const res = await fetchAI(prompt, signal);
             const answer = await res.text();
             removeThinkingMessage(thinkingEl);
-            addMessage(`### 💘 Rizz Master 3.0\n${answer}`, 'ai', 'text', thoughts);
+            addMessage(`### 💘 Rizz Master 5.0 (Creative Mode)\n${answer}`, 'ai', 'text', thoughts);
         }
 
         async function continueMood(text, thinkingEl, signal, log, thoughts) {
@@ -695,26 +732,32 @@
                 AI_STATE.mood.active = false;
                 AI_STATE.mood.step = 0;
                 AI_STATE.mood.target = null;
-                log("Parsing emotional subtext...");
-                const prompt = `Task: Analyze the mood, emotions, and subtext of a conversation.
+                log("Engaging Empathetic Neural Matrix...");
+                
+                // --- UPGRADED MOOD ANALYZER PROMPT (10x Better) ---
+                const prompt = `Task: Perform an elite-level psychological analysis of a conversation.
                 Target Person: "${target}"
-                Conversation/Messages: "${messages}"
-                Analyze:
-                1. Their explicit mood (what they say).
-                2. Their hidden/subconscious feelings (what they mean).
-                3. The dynamic between the speakers (if user messages are included).
-                4. Advice on how to respond or handle the situation.
+                Conversation: "${messages}"
+                
+                Deep Dive Analysis Protocol:
+                1. **Emotional Spectrogram:** specific emotions detected (e.g., Insecure, Validate-seeking, Dismissive, Guarded).
+                2. **Subtext Decoder:** What are they *really* saying? (The "Quiet Part" out loud).
+                3. **Psychological Profile:** Guess their attachment style (Anxious, Avoidant, Secure) based on this text.
+                4. **Truth/Deception Score:** Likelihood of them holding back information (Low/Medium/High).
+                5. **Strategic Advice:** The absolute best way to respond to get a positive outcome.
+                
                 Format:
-                **Mood:** [Emoji] [Summary]
-                **Hidden Meaning:** [Deep analysis of intent]
-                **Dynamic:** [Power balance/Vibe check]
-                **Advice:** [Actionable tip]
-                IMPORTANT: Respond in the SAME LANGUAGE as the conversation provided.`;
+                **Emotional State:** [Emoji] [Analysis]
+                **The Subtext:** [What they mean]
+                **Psych Profile:** [Attachment Style & Key Traits]
+                **Advice:** [Actionable Step]
+                
+                Constraint: Respond in the SAME LANGUAGE as the conversation provided.`;
                 
                 const res = await fetchAI(prompt, signal);
                 const answer = await res.text();
                 removeThinkingMessage(thinkingEl);
-                addMessage(`### 🧠 Mood Analysis\n${answer}`, 'ai', 'text', thoughts);
+                addMessage(`### 🧠 Mood Analysis Pro\n${answer}`, 'ai', 'text', thoughts);
             }
         }
 
@@ -1120,21 +1163,28 @@
 
             if (tool.id === 'dictionary') {
                 query = text.replace(/define|definition|meaning of/gi, '').trim();
-                url = `${tool.url}${encodeURIComponent(query)}`;
+                log(`Consulting Universal Lexicon for "${query}"...`);
+                
+                // Use AI instead of static API to capture slang/nuance
+                const prompt = `Define the term: "${query}".
+                Provide:
+                1. The Standard Dictionary Definition (Academic).
+                2. The Slang / Urban Dictionary Meaning (Street/Internet culture).
+                3. Connotations (Is it positive, negative, cringe?).
+                4. A usage example for both contexts.
+                
+                Keep it concise but comprehensive.`;
+                
                 try {
-                    const req = await fetchWithRetry(url, { signal });
-                    const res = await req.json();
+                    const res = await fetchAI(prompt, signal);
+                    const txt = await res.text();
                     removeThinkingMessage(thinkingEl);
-                    if (Array.isArray(res)) {
-                        const word = res[0];
-                        let out = `### 📖 Definition: ${word.word}\n`;
-                        if(word.phonetic) out += `*${word.phonetic}*\n\n`;
-                        word.meanings.slice(0,2).forEach(m => {
-                            out += `**${m.partOfSpeech}**: ${m.definitions[0].definition}\n\n`;
-                        });
-                        addMessage(out, 'ai', 'text', thoughts);
-                    } else addMessage("Definition not found.", 'ai', 'text', thoughts);
-                } catch(e) { removeThinkingMessage(thinkingEl); addMessage("Dict error.", 'ai', 'text', thoughts); }
+                    addMessage(`### 📖 Universal Definition: ${query}\n${txt}`, 'ai', 'text', thoughts);
+                } catch(e) {
+                     // Fallback to old API if AI fails? No, AI is robust enough here.
+                     removeThinkingMessage(thinkingEl);
+                     addMessage("Definition retrieval failed.", 'ai', 'text', thoughts);
+                }
                 return;
             }
 
